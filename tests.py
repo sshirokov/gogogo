@@ -1,3 +1,7 @@
+'''
+Rules as interpreted from:
+http://en.wikipedia.org/wiki/Rules_of_Go
+'''
 import unittest
 
 class BoardStateTests(unittest.TestCase):
