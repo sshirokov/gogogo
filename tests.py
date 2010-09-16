@@ -25,4 +25,19 @@ class BoardStateTests(unittest.TestCase):
     def test_two_complex_shapes_are_distinct(self):
         self.assertTrue(False, "Two shapes are present because of a diagonal")
 
+    def test_liberty_is_adjecent_empty_space_of_stone(self):
+        self.assertTrue(False, "A Liberty is an adjecent empty space of stone")
+
+    def test_single_stone_has_four_liberties(self):
+        self.assertTrue(False, "A single stone has four liberties")
+
+    def test_single_oposing_stone_removes_liberty(self):
+        self.assertTrue(False, "An adjacent oposing stone, decrements a stone's liberties")
+
+    def test_group_shares_liberties(self):
+        self.assertTrue(False, "Adding a connected stone shares the liberties of both stones")
+
+    def test_shape_can_count_liberties(self):
+        self.assertTrue(False, "A shape should correctly count its liberties")
+
     
