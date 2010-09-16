@@ -1,6 +1,12 @@
-import unittests
+import unittest
 
 class BoardStateTests(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+    
     def test_two_players(self):
         self.assertTrue(False, "Game needs two players")
     
@@ -41,3 +47,5 @@ class BoardStateTests(unittest.TestCase):
         self.assertTrue(False, "A shape should correctly count its liberties")
 
     
+if __name__ == '__main__':
+    unittest.main()
