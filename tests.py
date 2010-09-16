@@ -66,23 +66,37 @@ class BoardMoveTests(unittest.TestCase):
         self.assertTrue(False, "Player can pass a turn")
 
     def test_play_steps(self):
-        def step_1():
+        def step_1_move_to_empty_space():
             self.assertTrue(False, "Player can play empty intersection")
 
-        def step_2():
+        def step_2_player_removes_opposing_liberty_free_stones():
             self.assertTrue(False, "Player removes oposing stones with no liberties")
 
-        def step_3():
-            self.assertTrue(False, "Player removes own stones with no liberties")
-            pass
+        def step_3_conditional_suicide():
+            if True: #TODO: Conditional
+                self.assertTrue(False, "Self capture is not allowed")
+            else:
+                self.assertTrue(False, "Self capture is allowed")
 
         [step() for step in (step_1, step_2, step_3)]
 
-    def test_step_3_of_play_makes_play_illegal(self):
-        if True: #TODO: Conditional
-            self.assertTrue(False, "Self capture is not allowed")
-        else:
-            self.assertTrue(False, "Self capture is allowed")
+    def test_turn_must_not_recreate_prior_state(self):
+        self.assertTrue(False, "A move can't create a boad state that existed in the past")
+
+    def test_game_ends_after_two_consecutive_passes(self):
+        self.assertTrue(False, "Back-to back passes should end a game")
+
+class BoardScoreTests(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_determine_winner(self):
+        self.assertTrue(False, "Game should figure out who won")
+
+
 
 if __name__ == '__main__':
     unittest.main()
