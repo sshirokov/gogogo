@@ -46,6 +46,43 @@ class BoardStateTests(unittest.TestCase):
     def test_shape_can_count_liberties(self):
         self.assertTrue(False, "A shape should correctly count its liberties")
 
+class BoardMoveTests(unittest.TestCase):
+    def setUp(self):
+        pass
     
+    def tearDown(self):
+        pass
+
+    def test_start_board_is_empty(self):
+        self.assertTrue(False, "Initial board is empty")
+
+    def test_know_who_plays_next(self):
+        self.assertTrue(False, "Board should know who's move it is")
+
+    def test_players_move_alternate(self):
+        self.assertTrue(False, "Player move changes each turn")
+
+    def test_player_can_pass(self):
+        self.assertTrue(False, "Player can pass a turn")
+
+    def test_play_steps(self):
+        def step_1():
+            self.assertTrue(False, "Player can play empty intersection")
+
+        def step_2():
+            self.assertTrue(False, "Player removes oposing stones with no liberties")
+
+        def step_3():
+            self.assertTrue(False, "Player removes own stones with no liberties")
+            pass
+
+        [step() for step in (step_1, step_2, step_3)]
+
+    def test_step_3_of_play_makes_play_illegal(self):
+        if True: #TODO: Conditional
+            self.assertTrue(False, "Self capture is not allowed")
+        else:
+            self.assertTrue(False, "Self capture is allowed")
+
 if __name__ == '__main__':
     unittest.main()
