@@ -20,6 +20,12 @@ class BoardStateTests(unittest.TestCase):
     def test_intersection_only_takes_valid_state(self):
         self.assertTrue(False, "A space can only have nothing, black, or white")
 
+    def test_two_interersections_are_connected(self):
+        self.assertTrue(False, "Intersections are connected if a path exists between them")
+
+    def test_two_intersections_not_connected(self):
+        self.assertTrue(False, "Two intersections with no path without diagonals of equal state are not connected")
+
     def test_two_stones_connected(self):
         self.assertTrue(False, "Two 90deg adjacent stones are connected")
 
@@ -99,8 +105,20 @@ class BoardScoreTests(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_determine_ownership_of_intersection(self):
+        self.assertTrue(False, "Should know if an intersection belongs to a player, or is neutral")
+        self.assertTrue(False, "Territory belongs to a player if there is no path to a point adjacent to oposing area")
+
+    def test_determine_player_area(self):
+        self.assertTrue(False, "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
+
     def test_determine_winner(self):
-        self.assertTrue(False, "Game should figure out who won")
+        self.assertTrue(False, "Winner should be the player with the highest area")
+        
+    def test_understand_draw(self):
+        self.assertTrue(False, "Equal scores draw the game")
+
+    
 
 
 
