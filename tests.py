@@ -82,7 +82,9 @@ class BoardMoveTests(unittest.TestCase):
             else:
                 self.assertTrue(False, "Self capture is allowed")
 
-        [step() for step in (step_1, step_2, step_3)]
+        [step() for step in (step_1_move_to_empty_space,
+                             step_2_player_removes_opposing_liberty_free_stones,
+                             step_3_conditional_suicide)]
 
     def test_turn_must_not_recreate_prior_state(self):
         self.assertTrue(False, "A move can't create a boad state that existed in the past")
