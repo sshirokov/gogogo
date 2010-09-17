@@ -21,7 +21,7 @@ class BoardStateTests(unittest.TestCase):
     
     def test_board_has_size(self):
         board = self.get_default_board()
-        self.assertTrueboard.width > 0, "Board needs to have a width")
+        self.assertTrue(board.width > 0, "Board needs to have a width")
         self.assertTrue(board.height > 0, "Board needs to have a height")
 
     def test_intersection_only_takes_valid_state(self):
