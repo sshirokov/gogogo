@@ -28,7 +28,6 @@ class BoardState(object):
     def _clear(self, x, y):
         def is_cleared_position(p):
             return p[:2] == (x, y)
-        
         self.positions = [p for p in self.positions if not is_cleared_position(p)]
 
     def _set(self, x, y, val):
@@ -38,10 +37,14 @@ class BoardState(object):
         self._clean_positions()
         return True
 
+    def position_exists(self, x, y):
+        return (x < self.width) and (y < self.height)
+
     def is_chain(self, a, b):
         '''
         Determines if there is a path of same state from point a(x, y) to point b(x, y)
         '''
+        from collections import deque
         
         return False
 
