@@ -8,17 +8,21 @@ import gogogo
 
 class BoardStateTests(unittest.TestCase):
     def setUp(self):
-        pass
+        def get_default_board():
+            return gogogo.BoardState()
+        self.get_default_board = get_default_board
 
     def tearDown(self):
         pass
-    
+
     def test_two_players(self):
-        board = gogogo.BoardState()
+        board = self.get_default_board()
         self.assertEqual(len(board.players), 2, "Game needs two players")
     
     def test_board_has_size(self):
-        self.assertTrue(False, "Board needs to be n by m where n>=m>0")
+        board = self.get_default_board()
+        self.assertTrue(board.width > 0, "Board needs to have a width")
+        self.assertTrue(board.height > 0, "Board needs to have a height")
 
     def test_intersection_only_takes_valid_state(self):
         self.assertTrue(False, "A space can only have nothing, black, or white")
