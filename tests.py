@@ -18,17 +18,37 @@ class BoardStateTests(unittest.TestCase):
     def test_two_players(self):
         board = self.get_default_board()
         self.assertEqual(len(board.players), 2, "Game needs two players")
-    
+
     def test_board_has_size(self):
         board = self.get_default_board()
         self.assertTrue(board.width > 0, "Board needs to have a width")
         self.assertTrue(board.height > 0, "Board needs to have a height")
 
     def test_intersection_only_takes_valid_state(self):
-        self.assertTrue(False, "A space can only have nothing, black, or white")
+        new_board = lambda: self.get_default_board()
+        self.assertTrue(new_board()._set(0, 0, None), "A space should be able to be clear")
+        self.assertTrue(new_board()._set(0, 0, "Black"), "A space should be able to be black")
+        self.assertTrue(new_board()._set(0, 0, "White"), "A space should be able to be white")
+
+    def test_intersection_can_only_have_one_value(self):
+        board = self.get_default_board()
+        board._set(0, 0, "Black")
+        board._set(0, 0, "White")
+        self.assertEqual(len(board.positions), 1, "A space can only have one position")
+
+    def test_blank_positions_are_not_stored(self):
+        board = self.get_default_board()
+        board._set(0, 0, None)
+        self.assertEqual(len(board.positions), 0, "We should not be keeping track of empty squares")
+        board._set(1, 1, "Black")
+        board._set(1, 1, None)
+        self.assertEqual(len(board.positions), 0, "Clearing a square should remove the position.")
+
 
     def test_two_interersections_are_connected(self):
-        self.assertTrue(False, "Intersections are connected if a path exists between them")
+    	board = self.get_default_board()
+        self.assertTrue(board.is_chain((1,1),(1,2)), "Intersections are connected if a path exists between them")
+        self.assertTrue(board.is_chain((1,1),(3,6)), "Intersections are connected if a longer path exists between them")
 
     def test_two_intersections_not_connected(self):
         self.assertTrue(False, "Two intersections with no path without diagonals of equal state are not connected")

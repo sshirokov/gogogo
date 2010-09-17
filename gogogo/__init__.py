@@ -22,8 +22,29 @@ class BoardState(object):
     def validate(self):
         return True
 
+    def _clean_positions(self):
+        self.positions = [p for p in set(self.positions) if p[2] != None]
+
+    def _clear(self, x, y):
+        def is_cleared_position(p):
+            return p[:2] == (x, y)
+        
+        self.positions = [p for p in self.positions if not is_cleared_position(p)]
+
+    def _set(self, x, y, val):
+        if val not in [None] + self.players: return False
+        self._clear(x, y)
+        if val != None: self.positions.append((x, y, val))
+        self._clean_positions()
+        return True
+
+    def is_chain(self, a, b):
+        '''
+        Determines if there is a path of same state from point a(x, y) to point b(x, y)
+        '''
+        
+        return False
+
     def __str__(self):
         return u"<Board: (%d, %d) :: (%s) Moves: %d>" % (self.width, self.height, " vs ".join(self.players), len(self.moves))
     __unicode__ = __str__
-
-
