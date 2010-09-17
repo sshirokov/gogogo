@@ -26,10 +26,4 @@ class BoardState(object):
         return u"<Board: (%d, %d) :: (%s) Moves: %d>" % (self.width, self.height, " vs ".join(self.players), len(self.moves))
     __unicode__ = __str__
 
-def main(self, *args):
-    board = BoardState('Black', 'White')
-    print "Board: ", board
-
-if __name__ == "__main__":
-    main(sys.argv[0], *sys.argv[:1])
 
