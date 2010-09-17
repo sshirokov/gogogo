@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 from gogogo import BoardState
 

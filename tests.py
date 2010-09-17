@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 '''
 Rules as interpreted from:
 http://en.wikipedia.org/wiki/Rules_of_Go
 '''
 import unittest
+import gogogo
 
 class BoardStateTests(unittest.TestCase):
     def setUp(self):
@@ -12,7 +14,8 @@ class BoardStateTests(unittest.TestCase):
         pass
     
     def test_two_players(self):
-        self.assertTrue(False, "Game needs two players")
+        board = gogogo.BoardState()
+        self.assertEqual(len(board.players), 2, "Game needs two players")
     
     def test_board_has_size(self):
         self.assertTrue(False, "Board needs to be n by m where n>=m>0")

@@ -11,7 +11,7 @@ class BoardState(object):
         '''
         options = dict({'width': 19,
                         'height': 19,
-                        'players': players,
+                        'players': players or ['Black', 'White'],
                         'moves': [],
                         'positions': [],
                         },
