@@ -21,7 +21,7 @@ class SimpleBoardStateTests(unittest.TestCase):
         self.assertEqual(int(board._distance((0,0), (0, 2))), 2, "Two points are 2 unit appart")
         self.assertEqual(int(board._distance((0,0), (1, 1))), 1, "Two points are 1 unit appart by diagonal")
         self.assertEqual(int(board._distance((0,0), (0, 0))), 0, "Two points the same")
-        
+
     def test_two_players(self):
         board = self.get_default_board()
         self.assertEqual(len(board.players), 2, "Game needs two players")
@@ -30,6 +30,11 @@ class SimpleBoardStateTests(unittest.TestCase):
         board = self.get_default_board()
         self.assertTrue(board.width > 0, "Board needs to have a width")
         self.assertTrue(board.height > 0, "Board needs to have a height")
+
+    def test_intersection_has_value(self):
+        board = self.get_default_board()
+        board._set(0, 0, "Black")
+        self.assertEqual(board._get(0, 0), "Black", "Value of intersection is returnable.")
 
     def test_intersection_only_takes_valid_state(self):
         new_board = lambda: self.get_default_board()

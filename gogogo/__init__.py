@@ -3,6 +3,25 @@ import sys, math
 
 class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
+class DuplicatePosition(BoardError): pass
+
+class TargettedPoint(object):
+    def __init__(self, x, y, target):
+        self.x, self.y = x, y
+        self.target = target
+
+    @property
+    def pair(self):
+        return (self.x, self.y)
+
+    def __cmp__(self, other):
+        mine = distance(self.pair, self.target)
+        theirs = distance(other.pair, other.target)
+        return cmp(mine, theirs)
+
+    def __repr__(self):
+        return "<Point: (%s, %s)>" % (self.x, self.y)
+
 
 class Position(object):
     def __init__(self, board, x, y, owner, **options):
@@ -32,6 +51,14 @@ class BoardState(object):
     def validate(self):
         return True
 
+    def dump_board(self):
+        for y in range(self.height - 1, -1, -1):
+            for x in range(self.width):
+                p = self._get(x, y)
+                print p and p.owner[0] or "+",
+            print
+        return True
+
     def _legal_position(self, x, y):
         return (x <= self.width and
                 y <= self.height)
@@ -45,22 +72,48 @@ class BoardState(object):
         self.positions = [p for p in self.positions if not is_cleared_position(p)]
 
     def _set(self, x, y, val):
-        if val not in [None] + self.players: return False
+        if val not in [None] + list(self.players): return False
         self._clear(x, y)
         if val != None: self.positions.append(Position(self, x, y, val))
         self._clean_positions()
         return True
 
+    def _get(self, x, y):
+        '''
+        Returns the value of that position. _get(x,y)
+        '''
+        pos = None
+        pos = [p for p in self.positions if p.x == x and p.y == y]
+        if len(pos) > 1: raise DuplicatePosition()
+        if len(pos): pos = pos[0]
+        return pos or None
+    
     def position_exists(self, x, y):
         return (x < self.width) and (y < self.height)
 
-    def is_chain(self, a, b):
+    def is_chain(self, start, finish):
         '''
         Determines if there is a path of same state from point a(x, y) to point b(x, y)
         '''
-        from collections import deque
+        import heapq
+        #Queue stores the to-visit list as (x, y, distance)
+        heap = []
+        removed = []
+        found = False
 
-        return False
+        def add_neighbors_of(node):
+            '''Add weighted neighbors of node to the queue'''
+
+        searching = True
+        heapq.heappush(heap, TargettedPoint(start[0], start[1], finish))
+        while searching:
+            visit = heapq.heappop(heap)
+            found = int(visit.distance()) == 0
+            if found: break
+            add_neighbors_of(visit)
+            if not len(heap): searching = False
+
+        return found
 
     def _distance(self, a, b):
         if type(a) == tuple and type(b) == tuple: (x1, y1), (x2, y2) = a, b
