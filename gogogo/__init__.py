@@ -14,13 +14,23 @@ class TargettedPoint(object):
     def pair(self):
         return (self.x, self.y)
 
+    def distance_between(self, a, b):
+        (x1, y1), (x2, y2) = a, b
+        dx2 = math.pow(x1-x2, 2)
+        dy2 = math.pow(y1-y2, 2)
+        return math.sqrt(dx2 + dy2)
+
+    @property
+    def distance(self):
+        if getattr(self, "distance_cache", None) == None:
+            self.distance_cache = self.distance_between(self.pair, self.target)
+        return self.distance_cache
+    
     def __cmp__(self, other):
-        mine = distance(self.pair, self.target)
-        theirs = distance(other.pair, other.target)
-        return cmp(mine, theirs)
+        return cmp(mine.distance, theirs.distance)
 
     def __repr__(self):
-        return "<Point: (%s, %s)>" % (self.x, self.y)
+        return "<Point: (%s, %s) |%s|>" % (self.x, self.y, self.distance)
 
 
 class Position(object):
@@ -108,7 +118,8 @@ class BoardState(object):
         heapq.heappush(heap, TargettedPoint(start[0], start[1], finish))
         while searching:
             visit = heapq.heappop(heap)
-            found = int(visit.distance()) == 0
+            print "Visiting:", visit
+            found = int(visit.distance) == 0
             if found: break
             add_neighbors_of(visit)
             if not len(heap): searching = False
