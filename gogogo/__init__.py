@@ -105,14 +105,14 @@ class BoardState(object):
         return pos or None
     
     def position_exists(self, x, y):
-        return (x < self.width) and (y < self.height)
+        return (x >= 0) and (y >= 0) and (x < self.width) and (y < self.height)
 
-    def is_chain(self, start, finish):
+    def is_chain(self, start, finish, **options):
         '''
         Determines if there is a path of same state from point a(x, y) to point b(x, y)
         '''
         import heapq
-        #Queue stores the to-visit list as (x, y, distance)
+        loudly = options.pop('loudly', False)
         heap = []
         found = False
 
@@ -135,8 +135,9 @@ class BoardState(object):
         heapq.heappush(heap, TargettedPoint(start[0], start[1], finish))
         while searching:
             visit = heapq.heappop(heap)
-            #print "Visiting:", visit
-            #self.dump_board(marks={'S': start, 'F': finish, 'V': (visit.x, visit.y)})
+            if loudly:
+                print "Visiting:", visit
+                self.dump_board(marks={'S': start, 'F': finish, 'V': (visit.x, visit.y)})
             found = int(visit.distance) == 0
             if found: break
             add_neighbors_of(visit)

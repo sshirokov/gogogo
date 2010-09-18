@@ -71,7 +71,11 @@ class BoardStateSimpleGroupTests(unittest.TestCase):
         self.assertTrue(board.is_chain((1,1),(3,6)), "Intersections are connected if a longer path exists between them")
 
     def test_two_intersections_not_connected(self):
-        self.assertTrue(False, "Two intersections with no path without diagonals of equal state are not connected")
+        board = self.get_default_board()
+        b, w = "Black", "White"
+        board._set(0, 1, b)
+        board._set(1, 0, b)
+        self.assertFalse(board.is_chain((0,0),(1,1)), "Two intersections with no path without diagonals of equal state are not connected")
 
     def test_two_stones_connected(self):
         self.assertTrue(False, "Two 90deg adjacent stones are connected")
