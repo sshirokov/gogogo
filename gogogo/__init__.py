@@ -5,7 +5,7 @@ class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
 
 class Position(object):
-    def __init__(self, x, y, owner, **options):
+    def __init__(self, board, x, y, owner, **options):
         self.x, self.y, self.owner = x, y, owner
         [setattr(self, key, val) for (key, val) in options]
 
@@ -38,7 +38,7 @@ class BoardState(object):
     def _set(self, x, y, val):
         if val not in [None] + self.players: return False
         self._clear(x, y)
-        if val != None: self.positions.append(Position(x, y, val))
+        if val != None: self.positions.append(Position(self, x, y, val))
         self._clean_positions()
         return True
 
