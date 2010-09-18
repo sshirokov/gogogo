@@ -15,6 +15,13 @@ class SimpleBoardStateTests(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_distance_function(self):
+        board = self.get_default_board()
+        self.assertEqual(int(board._distance((0,0), (0, 1))), 1, "Two points are 1 unit appart")
+        self.assertEqual(int(board._distance((0,0), (0, 2))), 2, "Two points are 2 unit appart")
+        self.assertEqual(int(board._distance((0,0), (1, 1))), 1, "Two points are 1 unit appart by diagonal")
+        self.assertEqual(int(board._distance((0,0), (0, 0))), 0, "Two points the same")
+        
     def test_two_players(self):
         board = self.get_default_board()
         self.assertEqual(len(board.players), 2, "Game needs two players")
@@ -44,7 +51,7 @@ class SimpleBoardStateTests(unittest.TestCase):
         board._set(1, 1, None)
         self.assertEqual(len(board.positions), 0, "Clearing a square should remove the position.")
 
-class BoardStateTests(unittest.TestCase):
+class BoardStateSimpleGroupTests(unittest.TestCase):
     def setUp(self):
         def get_default_board():
             return gogogo.BoardState()
@@ -70,6 +77,15 @@ class BoardStateTests(unittest.TestCase):
     def test_two_diagonal_stones_not_connected(self):
         self.assertFalse(True, "Two stones diagnoally do not connect")
 
+class BoardStateTests(unittest.TestCase):
+    def setUp(self):
+        def get_default_board():
+            return gogogo.BoardState()
+        self.get_default_board = get_default_board
+
+    def tearDown(self):
+        pass
+    
     def test_complex_shape_is_connected(self):
         self.assertTrue(False, "A shape of three pairs at 90deg angles, are connected")
 
