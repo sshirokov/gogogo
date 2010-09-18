@@ -43,6 +43,9 @@ class Position(object):
     def discover_tag(self):
         return None
 
+    def __repr__(self):
+        return "Position: (%s, %s) => %s" % (self.x, self.y, self.owner)
+
 class BoardState(object):
     def __init__(self, *players, **options):
         '''
