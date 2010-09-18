@@ -28,17 +28,17 @@ class BoardState(object):
         return True
 
     def _clean_positions(self):
-        self.positions = [p for p in set(self.positions) if p[2] != None]
+        self.positions = [p for p in set(self.positions) if p.owner != None]
 
     def _clear(self, x, y):
         def is_cleared_position(p):
-            return p[:2] == (x, y)
+            return (p.x, p.y) == (x, y)
         self.positions = [p for p in self.positions if not is_cleared_position(p)]
 
     def _set(self, x, y, val):
         if val not in [None] + self.players: return False
         self._clear(x, y)
-        if val != None: self.positions.append((x, y, val))
+        if val != None: self.positions.append(Position(x, y, val))
         self._clean_positions()
         return True
 
