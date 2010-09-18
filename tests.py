@@ -111,6 +111,9 @@ class BoardStateTests(unittest.TestCase):
                                all, True)
         self.assertTrue(all_connected, "A shape of three pairs at 90deg angles, all peices are connected")
 
+    def test_shape_knows_all_members(self):
+        self.assertTrue(False, "A shape should be able to tell me its members")
+        
     def test_two_complex_shapes_are_distinct(self):
         self.assertTrue(False, "Two shapes are present because of a diagonal")
 
