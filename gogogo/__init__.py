@@ -27,7 +27,7 @@ class TargettedPoint(object):
         return self.distance_cache
     
     def __cmp__(self, other):
-        return cmp(mine.distance, theirs.distance)
+        return cmp(self.distance, other.distance)
 
     def __repr__(self):
         return "<Point: (%s, %s) |%s|>" % (self.x, self.y, self.distance)
@@ -108,11 +108,22 @@ class BoardState(object):
         import heapq
         #Queue stores the to-visit list as (x, y, distance)
         heap = []
-        removed = []
         found = False
 
         def add_neighbors_of(node):
             '''Add weighted neighbors of node to the queue'''
+            v = self._get(node.x, node.y)
+            def neighbors_of_same_state(p):
+                maybe = [(p.x - 1, p.y),
+                         (p.x + 1, p.y),
+                         (p.x, p.y - 1),
+                         (p.x, p.y + 1)]
+                v = getattr(self._get(p.x, p.y), 'owner', None)
+                return [TargettedPoint(*loc + (finish,)) for loc in maybe if self.position_exists(*loc) and
+                        getattr(self._get(*loc), 'owner', None) == v]
+
+            for neighbor in neighbors_of_same_state(node):
+                heapq.heappush(heap, neighbor)
 
         searching = True
         heapq.heappush(heap, TargettedPoint(start[0], start[1], finish))
