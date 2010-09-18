@@ -99,7 +99,17 @@ class BoardStateTests(unittest.TestCase):
         pass
     
     def test_complex_shape_is_connected(self):
-        self.assertTrue(False, "A shape of three pairs at 90deg angles, are connected")
+        board = self.get_default_board()
+        b = 'Black'
+        all = [board._set(0, 0, b),
+               board._set(0, 1, b),
+               board._set(1, 1, b),
+               board._set(1, 2, b)]
+        all_connected = reduce(lambda acc, p: acc and
+                                              (len([t for t in all
+                                                      if board.is_chain((p.x, p.y), (t.x, t.y))]) == len(all)),
+                               all, True)
+        self.assertTrue(all_connected, "A shape of three pairs at 90deg angles, all peices are connected")
 
     def test_two_complex_shapes_are_distinct(self):
         self.assertTrue(False, "Two shapes are present because of a diagonal")

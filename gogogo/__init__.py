@@ -90,9 +90,12 @@ class BoardState(object):
     def _set(self, x, y, val):
         if val not in [None] + list(self.players): return False
         self._clear(x, y)
-        if val != None: self.positions.append(Position(self, x, y, val))
+        p = None
+        if val != None:
+            p = Position(self, x, y, val)
+            self.positions.append(p)
         self._clean_positions()
-        return True
+        return p or True
 
     def _get(self, x, y):
         '''
