@@ -34,7 +34,7 @@ class SimpleBoardStateTests(unittest.TestCase):
     def test_intersection_has_value(self):
         board = self.get_default_board()
         board._set(0, 0, "Black")
-        self.assertEqual(board._get(0, 0), "Black", "Value of intersection is returnable.")
+        self.assertEqual(type(board._get(0, 0)), gogogo.Position, "Value of intersection is returnable.")
 
     def test_intersection_only_takes_valid_state(self):
         new_board = lambda: self.get_default_board()
@@ -78,13 +78,16 @@ class BoardStateSimpleGroupTests(unittest.TestCase):
         self.assertFalse(board.is_chain((0,0),(1,1)), "Two intersections with no path without diagonals of equal state are not connected")
 
     def test_two_stones_connected(self):
-        self.assertTrue(False, "Two 90deg adjacent stones are connected")
-
-    def test_two_empty_spaces_are_connected(self):
-        self.assertTrue(False, "Two 90deg adjacent empties are connected")
+        board = self.get_default_board()
+        board._set(5, 5, 'Black')
+        board._set(5, 6, 'Black')
+        self.assertTrue(board.is_chain((5,5), (5,6)), "Two 90deg adjacent stones are connected")
 
     def test_two_diagonal_stones_not_connected(self):
-        self.assertFalse(True, "Two stones diagnoally do not connect")
+        board = self.get_default_board()
+        board._set(5, 5, 'Black')
+        board._set(6, 6, 'Black')
+        self.assertFalse(board.is_chain((5,5), (6,6)), "Two 90deg adjacent stones are connected")
 
 class BoardStateTests(unittest.TestCase):
     def setUp(self):
