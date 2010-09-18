@@ -61,11 +61,17 @@ class BoardState(object):
     def validate(self):
         return True
 
-    def dump_board(self):
+    def dump_board(self, **options):
+        marks = options.pop('marks', {})
+        def mark_for(x, y):
+            for (mark, coord) in marks.items():
+                if coord == (x, y): return mark
+            return None
         for y in range(self.height - 1, -1, -1):
             for x in range(self.width):
                 p = self._get(x, y)
-                print p and p.owner[0] or "+",
+                p = getattr(p, 'owner', mark_for(x, y) or "+")[0]
+                print p,
             print
         return True
 
@@ -129,7 +135,8 @@ class BoardState(object):
         heapq.heappush(heap, TargettedPoint(start[0], start[1], finish))
         while searching:
             visit = heapq.heappop(heap)
-            print "Visiting:", visit
+            #print "Visiting:", visit
+            #self.dump_board(marks={'S': start, 'F': finish, 'V': (visit.x, visit.y)})
             found = int(visit.distance) == 0
             if found: break
             add_neighbors_of(visit)
