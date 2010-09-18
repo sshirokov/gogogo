@@ -4,6 +4,11 @@ import sys
 class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
 
+class Position(object):
+    def __init__(self, x, y, owner, **options):
+        self.x, self.y, self.owner = x, y, owner
+        [setattr(self, key, val) for (key, val) in options]
+
 class BoardState(object):
     def __init__(self, *players, **options):
         '''

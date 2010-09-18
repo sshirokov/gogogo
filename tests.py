@@ -6,7 +6,7 @@ http://en.wikipedia.org/wiki/Rules_of_Go
 import unittest
 import gogogo
 
-class BoardStateTests(unittest.TestCase):
+class SimpleBoardStateTests(unittest.TestCase):
     def setUp(self):
         def get_default_board():
             return gogogo.BoardState()
@@ -44,6 +44,14 @@ class BoardStateTests(unittest.TestCase):
         board._set(1, 1, None)
         self.assertEqual(len(board.positions), 0, "Clearing a square should remove the position.")
 
+class BoardStateTests(unittest.TestCase):
+    def setUp(self):
+        def get_default_board():
+            return gogogo.BoardState()
+        self.get_default_board = get_default_board
+
+    def tearDown(self):
+        pass
 
     def test_two_interersections_are_connected(self):
     	board = self.get_default_board()
