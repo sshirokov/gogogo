@@ -6,11 +6,13 @@ http://en.wikipedia.org/wiki/Rules_of_Go
 import unittest
 import gogogo
 
+def default_setUp(self):
+    def get_default_board():
+        return gogogo.BoardState()
+    self.get_default_board = get_default_board
+
 class SimpleBoardStateTests(unittest.TestCase):
-    def setUp(self):
-        def get_default_board():
-            return gogogo.BoardState()
-        self.get_default_board = get_default_board
+    setUp = default_setUp
 
     def tearDown(self):
         pass
@@ -57,10 +59,7 @@ class SimpleBoardStateTests(unittest.TestCase):
         self.assertEqual(len(board.positions), 0, "Clearing a square should remove the position.")
 
 class BoardStateSimpleGroupTests(unittest.TestCase):
-    def setUp(self):
-        def get_default_board():
-            return gogogo.BoardState()
-        self.get_default_board = get_default_board
+    setUp = default_setUp
 
     def tearDown(self):
         pass
@@ -90,11 +89,8 @@ class BoardStateSimpleGroupTests(unittest.TestCase):
         self.assertFalse(board.is_chain((5,5), (6,6)), "Two 90deg adjacent stones are connected")
 
 class BoardStateTests(unittest.TestCase):
-    def setUp(self):
-        def get_default_board():
-            return gogogo.BoardState()
-        self.get_default_board = get_default_board
-
+    setUp = default_setUp
+    
     def tearDown(self):
         pass
     
@@ -183,9 +179,8 @@ class BoardStateTests(unittest.TestCase):
         self.assertEqual(len(shape.liberties), 12, "A shape should correctly count its liberties")
 
 class BoardMoveTests(unittest.TestCase):
-    def setUp(self):
-        pass
-    
+    setUp = default_setUp
+
     def tearDown(self):
         pass
 
@@ -225,9 +220,8 @@ class BoardMoveTests(unittest.TestCase):
         self.assertTrue(False, "Back-to back passes should end a game")
 
 class BoardScoreTests(unittest.TestCase):
-    def setUp(self):
-        pass
-
+    setUp = default_setUp
+    
     def tearDown(self):
         pass
 
