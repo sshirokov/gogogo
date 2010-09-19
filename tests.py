@@ -166,16 +166,20 @@ class BoardMoveTests(unittest.TestCase):
         pass
 
     def test_start_board_is_empty(self):
-        self.assertTrue(False, "Initial board is empty")
+        self.assertEqual(len(self.board.positions), 0, "Initial board is empty")
 
     def test_know_who_plays_next(self):
-        self.assertTrue(False, "Board should know who's move it is")
+        self.assertEqual(self.board.player_turn(), self.board.players[0], "Board should know who's move it is")
 
     def test_players_move_alternate(self):
-        self.assertTrue(False, "Player move changes each turn")
+        self.assertEqual(self.board.player_turn(), self.board.players[0], "Black moves first")
+        self.board.move(None) #Pass
+        self.assertEqual(self.board.player_turn(), self.board.players[1], "Players turn should alternate")
+
 
     def test_player_can_pass(self):
-        self.assertTrue(False, "Player can pass a turn")
+        self.board.move(None)
+        self.assertEqual(self.board.player_turn(), self.board.players[1], "Player can pass a turn")
 
     def test_play_steps(self):
         def step_1_move_to_empty_space():
