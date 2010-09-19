@@ -137,7 +137,11 @@ class BoardStateTests(unittest.TestCase):
         self.assertNotEqual(shape1, shape2, "Two shapes are present because of a diagonal")
 
     def test_liberty_is_adjecent_empty_space_of_stone(self):
-        self.assertTrue(False, "A Liberty is an adjecent empty space of stone")
+        board = self.get_default_board()
+        p = board._set(1, 1, "Black")
+        board._set(0, 1, "Black")
+        self.assertTrue(p.is_liberty(1, 0), "A Liberty is an adjecent empty space of stone")
+        self.assertFalse(p.is_liberty(0, 1), "A Liberty is an adjecent _empty_ space of stone")
 
     def test_single_stone_has_four_liberties(self):
         self.assertTrue(False, "A single stone has four liberties")

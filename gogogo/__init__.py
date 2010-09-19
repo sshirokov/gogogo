@@ -75,6 +75,17 @@ class Position(object):
         self.tag = None
         [setattr(self, key, val) for (key, val) in options]
 
+    @property
+    def edges(self):
+        return [pos for pos in [(self.x + 1, self.y),
+                                (self.x - 1, self.y),
+                                (self.x, self.y + 1),
+                                (self.x, self.y - 1)]
+                if self.board.position_exists(*pos)]
+
+    def is_liberty(self, x, y):
+        return (x, y) in self.edges and not self.board._get(x, y)
+
     def __eq__(self, other):
         return (self.x == other.x and
                 self.y == other.y and
