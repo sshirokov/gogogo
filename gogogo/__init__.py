@@ -4,6 +4,7 @@ import sys, math
 class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
 class DuplicatePosition(BoardError): pass
+class NotValidShape(BoardError): pass
 
 class TargettedPoint(object):
     def __init__(self, x, y, target):
@@ -32,16 +33,54 @@ class TargettedPoint(object):
     def __repr__(self):
         return "<Point: (%s, %s) |%s|>" % (self.x, self.y, self.distance)
 
+class Shape(object):
+    def __init__(self, board, x, y):
+        self.board = board
+        self.initial = board._get(x, y)
+        self.members = []
+        if not self.initial: raise NotValidShape()
+        self.discover_members()
+
+    @property
+    def size(self):
+        return len(self.members)
+
+    def discover_members(self):
+        self.members = []
+
+        def neighbors_of_same_owner(p):
+            return [point for point in
+                    [self.board._get(*loc)
+                     for loc in [(p.x - 1, p.y),
+                                 (p.x + 1, p.y),
+                                 (p.x, p.y - 1),
+                                 (p.x, p.y + 1)]]
+                    if point and point.owner == p.owner]
+        def walk_network(point):
+            if point in self.members: return
+            self.members.append(point)
+            [walk_network(p) for p in neighbors_of_same_owner(point)]
+        walk_network(self.initial)
+
+
+
 
 class Position(object):
     def __init__(self, board, x, y, owner, **options):
         self.board, self.x, self.y, self.owner = board, x, y, owner
         self.tag = None
         [setattr(self, key, val) for (key, val) in options]
-        self.discover_tag()
 
-    def discover_tag(self):
-        return None
+    def __eq__(self, other):
+        return (self.x == other.x and
+                self.y == other.y and
+                self.owner == other.owner and
+                self.board == other.board)
+
+    def __cmp__(self, other):
+        p = "(%s, %s)"
+        return cmp(p % (self.x, self.y),
+                   p % (other.x, other.py))
 
     def __repr__(self):
         return "Position: (%s, %s) => %s" % (self.x, self.y, self.owner)
@@ -150,6 +189,10 @@ class BoardState(object):
             if not len(heap): searching = False
 
         return found
+
+    def shape_at(self, x, y):
+        try: return Shape(self, x, y)
+        except NotValidShape: return None
 
     def _distance(self, a, b):
         if type(a) == tuple and type(b) == tuple: (x1, y1), (x2, y2) = a, b
