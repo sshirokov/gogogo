@@ -149,7 +149,12 @@ class BoardStateTests(unittest.TestCase):
         self.assertEqual(len(p.liberties), 4, "A single stone has four liberties")
 
     def test_single_oposing_stone_removes_liberty(self):
-        self.assertTrue(False, "An adjacent oposing stone, decrements a stone's liberties")
+        board = self.get_default_board()
+        p = board._set(1, 1, "Black")
+        before = p.liberties
+        board._set(0, 1, "White")
+        after = p.liberties
+        self.assertEqual(len(after), len(before) - 1, "An adjacent oposing stone, decrements a stone's liberties")
 
     def test_group_shares_liberties(self):
         self.assertTrue(False, "Adding a connected stone shares the liberties of both stones")
