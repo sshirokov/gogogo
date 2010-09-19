@@ -45,6 +45,12 @@ class Shape(object):
     def size(self):
         return len(self.members)
 
+    @property
+    def liberties(self):
+        liberties = set()
+        [liberties.update(p.liberties) for p in self.members]
+        return list(liberties)
+
     def discover_members(self):
         self.members = []
 
@@ -127,6 +133,7 @@ class BoardState(object):
         def mark_for(x, y):
             for (mark, coord) in marks.items():
                 if coord == (x, y): return mark
+                if (x, y) in coord: return mark
             return None
         for y in range(self.height - 1, -1, -1):
             for x in range(self.width):

@@ -157,10 +157,30 @@ class BoardStateTests(unittest.TestCase):
         self.assertEqual(len(after), len(before) - 1, "An adjacent oposing stone, decrements a stone's liberties")
 
     def test_group_shares_liberties(self):
-        self.assertTrue(False, "Adding a connected stone shares the liberties of both stones")
+        board = self.get_default_board()
+        board._set(10, 10, "Black")
+        board._set(10, 11, "Black")
+        board._set(9, 10, "Black")
+        shape = board.shape_at(10, 10)
+        self.assertEqual(len(shape.liberties), 7, "Adding a connected stone shares the liberties of both stones")
 
     def test_shape_can_count_liberties(self):
-        self.assertTrue(False, "A shape should correctly count its liberties")
+        board = self.get_default_board()
+        board._set(10, 10, "Black")
+        board._set(10, 11, "Black")
+        board._set(9, 10, "Black")
+        board._set(8, 10, "Black")
+        board._set(8, 11, "Black")
+        board._set(8, 12, "Black")
+        board._set(8, 13, "Black")
+        board._set(7, 12, "Black")
+
+        board._set(7, 10, "White")
+        board._set(9, 11, "White")
+
+        shape = board.shape_at(10, 10)
+
+        self.assertEqual(len(shape.liberties), 12, "A shape should correctly count its liberties")
 
 class BoardMoveTests(unittest.TestCase):
     def setUp(self):
