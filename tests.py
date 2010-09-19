@@ -144,7 +144,9 @@ class BoardStateTests(unittest.TestCase):
         self.assertFalse(p.is_liberty(0, 1), "A Liberty is an adjecent _empty_ space of stone")
 
     def test_single_stone_has_four_liberties(self):
-        self.assertTrue(False, "A single stone has four liberties")
+        board = self.get_default_board()
+        p = board._set(1, 1, "Black")
+        self.assertEqual(len(p.liberties), 4, "A single stone has four liberties")
 
     def test_single_oposing_stone_removes_liberty(self):
         self.assertTrue(False, "An adjacent oposing stone, decrements a stone's liberties")

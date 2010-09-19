@@ -83,6 +83,10 @@ class Position(object):
                                 (self.x, self.y - 1)]
                 if self.board.position_exists(*pos)]
 
+    @property
+    def liberties(self):
+        return [loc for loc in self.edges if self.is_liberty(*loc)]
+
     def is_liberty(self, x, y):
         return (x, y) in self.edges and not self.board._get(x, y)
 
