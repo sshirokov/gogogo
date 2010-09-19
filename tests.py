@@ -35,10 +35,9 @@ class SimpleBoardStateTests(unittest.TestCase):
         self.assertEqual(type(self.board._get(0, 0)), gogogo.Position, "Value of intersection is returnable.")
 
     def test_intersection_only_takes_valid_state(self):
-        new_board = lambda: gogogo.BoardState()
-        self.assertTrue(new_board()._set(0, 0, None), "A space should be able to be clear")
-        self.assertTrue(new_board()._set(0, 0, "Black"), "A space should be able to be black")
-        self.assertTrue(new_board()._set(0, 0, "White"), "A space should be able to be white")
+        self.assertTrue(self.new_board()._set(0, 0, None), "A space should be able to be clear")
+        self.assertTrue(self.new_board()._set(0, 0, "Black"), "A space should be able to be black")
+        self.assertTrue(self.new_board()._set(0, 0, "White"), "A space should be able to be white")
 
     def test_intersection_can_only_have_one_value(self):
         self.board._set(0, 0, "Black")
