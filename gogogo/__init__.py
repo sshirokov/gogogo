@@ -123,7 +123,16 @@ class BoardState(object):
                         },
                        **options)
         [setattr(self, k, v) for (k, v) in options.items()]
+        self.turn_count = len(self.moves)
         if not self.validate(): raise HistoryInvalid()
+
+    def move(self, *args, **kwargs):
+        #Make a move or pass
+        self.turn_count += 1
+        return True
+
+    def player_turn(self):
+        return self.players[self.turn_count % len(self.players)]
 
     def validate(self):
         return True
