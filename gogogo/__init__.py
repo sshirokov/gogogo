@@ -62,6 +62,10 @@ class Shape(object):
             [walk_network(p) for p in neighbors_of_same_owner(point)]
         walk_network(self.initial)
 
+    def __eq__(self, other):
+        return (self.size == other.size and
+                sorted(self.members) == sorted(other.members))
+
 
 
 
@@ -80,7 +84,7 @@ class Position(object):
     def __cmp__(self, other):
         p = "(%s, %s)"
         return cmp(p % (self.x, self.y),
-                   p % (other.x, other.py))
+                   p % (other.x, other.y))
 
     def __repr__(self):
         return "Position: (%s, %s) => %s" % (self.x, self.y, self.owner)

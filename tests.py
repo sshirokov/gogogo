@@ -122,7 +122,19 @@ class BoardStateTests(unittest.TestCase):
         self.assertTrue(all_present, "A shape should be able to tell me its members")
 
     def test_two_complex_shapes_are_distinct(self):
-        self.assertTrue(False, "Two shapes are present because of a diagonal")
+        board = self.get_default_board()
+        [board._set(x, y, "Black") for (x, y)
+         in [(10, 10),
+             (9, 10),
+             (8, 10),
+             (7, 9),
+             (6, 9),
+             (5, 9)]]
+        shape1 = board.shape_at(10,10)
+        self.assertTrue(shape1, "There is a shape that touches (10, 10)")
+        shape2 = board.shape_at(6, 9)
+        self.assertTrue(shape2, "There is a shape that touches (6, 9)")
+        self.assertNotEqual(shape1, shape2, "Two shapes are present because of a diagonal")
 
     def test_liberty_is_adjecent_empty_space_of_stone(self):
         self.assertTrue(False, "A Liberty is an adjecent empty space of stone")
