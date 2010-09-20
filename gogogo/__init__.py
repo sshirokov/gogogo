@@ -259,6 +259,14 @@ class BoardState(object):
     def validate(self):
         return True
 
+    def get_owner_of(self, x, y):
+        p = self._get(x, y)
+        o = None
+        if p: o = p.owner
+        else:
+            pass
+        return o
+
     def dump_board(self, **options):
         marks = options.pop('marks', {})
         def mark_for(x, y):

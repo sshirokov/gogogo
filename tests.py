@@ -265,8 +265,26 @@ class BoardScoreTests(unittest.TestCase):
         pass
 
     def test_determine_ownership_of_intersection(self):
-        self.assertTrue(False, "Should know if an intersection belongs to a player, or is neutral")
-        self.assertTrue(False, "Territory belongs to a player if there is no path to a point adjacent to oposing area")
+        owner = self.board.get_owner_of(10, 10)
+        self.assertEqual(owner, None, "(10, 10) on an empty board is neutral")
+        self.board.move(10, 10)
+        self.assertEqual(self.board.get_owner_of(10, 10), self.board.players[0], "An owned square belongs to the peice owner")
+        self.board = self.new_board()
+        [self.board._set(x, y, color) for (x, y, color) in [(bx, by, "Black") for (bx, by) in [(0, 5), (1, 5), (2, 5),
+                                                                                                               (2, 4),
+                                                                                                               (2, 3),
+                                                                                                               (2, 2),
+                                                                                                               (2, 1),
+                                                                                                               (2, 0),
+                                                                                               ]] +
+                                                           [(wx, wy, "White") for (wx, wy) in [(18, 18),
+                                                                                               (3, 2), (4, 2), (5, 2), (6, 2),
+                                                                                                                       (6, 1),
+                                                                                                                       (6, 0),
+                                                                                               ]]]
+        print; self.board.dump_board()
+        self.assertEqual(self.board.get_owner_of(0, 0), "Black", "Empty space surrounded by a single color is owned by that color")
+        self.assertEqual(self.board.get_owner_of(4, 0), None, "Empty space that connects to more than one color is neutral")
 
     def test_determine_player_area(self):
         self.assertTrue(False, "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
