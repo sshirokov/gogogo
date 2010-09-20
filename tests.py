@@ -282,7 +282,6 @@ class BoardScoreTests(unittest.TestCase):
                                                                                                                        (6, 1),
                                                                                                                        (6, 0),
                                                                                                ]]]
-        print; self.board.dump_board()
         self.assertEqual(self.board.get_owner_of(0, 0), "Black", "Empty space surrounded by a single color is owned by that color")
         self.assertEqual(self.board.get_owner_of(4, 0), None, "Empty space that connects to more than one color is neutral")
 
