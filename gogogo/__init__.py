@@ -3,8 +3,17 @@ import sys, math
 
 class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
+class InvalidPosition(BoardError): pass
 class DuplicatePosition(BoardError): pass
 class NotValidShape(BoardError): pass
+
+class Move(object):
+    def __init__(self, player, *pass_or_x_y):
+        self.player = player
+        self.passing = len(pass_or_x_y) == 1
+        if not self.passing:
+            self.x, self.y = pass_or_x_y
+
 
 class TargettedPoint(object):
     def __init__(self, x, y, target):
@@ -123,16 +132,84 @@ class BoardState(object):
                         },
                        **options)
         [setattr(self, k, v) for (k, v) in options.items()]
-        self.turn_count = len(self.moves)
         if not self.validate(): raise HistoryInvalid()
 
     def move(self, *args, **kwargs):
+        '''
+        Perform move or skip turn
+
+        move(None) => Passes the turn for the given player
+        move(x, y) => Places a player's maker at (x, y) if possible
+
+        move(..., player="Name") => Overrides the player performing the move
+        '''
+        passing = len(args) == 1 and args[0] == None
+        x, y = (None, None)
+        if not passing: x, y = args
+        player = kwargs.pop('player', self.player_turn())
+        snapshot = self.take_snapshot()
+
+        if not passing:
+            if self._get(x, y): return False
+            self._set(x, y, player)
+
+            [self._set(p.x, p.y, None) and self.positions.remove(p)
+             for p in self.get_captured_by(player)]
+
+            losses = self.get_captured_of(player)
+            if self.self_capture_allowed:
+                [self._set(p.x, p.y, None) and self.positions.remove(p)
+                 for p in losses]
+            elif losses:
+                self.restore_snapshot(snapshot)
+                return False
+
         #Make a move or pass
-        self.turn_count += 1
+        passing_or_xy = (passing or (x, y),)
+        self.moves.append(Move(player, *passing_or_xy))
+
         return True
 
+    def take_snapshot(self):
+        from copy import copy
+        return {'width': self.width,
+                'height': self.height,
+                'players': copy(self.players),
+                'moves': copy(self.moves),
+                'positions': copy(self.positions)}
+                
+
+    def restore_snapshot(self, snap):
+        [setattr(self, name, value) for (name, value) in snap.items()]
+
+    @property
+    def self_capture_allowed(self):
+        return False
+
+    def get_opponents_of(self, player):
+        return [p for p in self.players if p != player]
+
+    def get_captured_by(self, player):
+        return []
+
+    def get_captured_of(self, player):
+        shapes = self.all_objects_of(player)
+        return []
+
+    def all_objects_of(self, player):
+        positions = [p for p in self.positions if p.owner == player]
+        shapes = []
+        while len(positions):
+            position = positions.pop()
+            shapes.append(self.shape_at(position.x, position.y))
+            for p in shapes[-1].members:
+                try: positions.remove(p)
+                except ValueError: pass
+
+        return list(set(shapes))
+
     def player_turn(self):
-        return self.players[self.turn_count % len(self.players)]
+        return self.players[len(self.moves) % len(self.players)]
 
     def validate(self):
         return True
@@ -152,10 +229,6 @@ class BoardState(object):
             print
         return True
 
-    def _legal_position(self, x, y):
-        return (x <= self.width and
-                y <= self.height)
-
     def _clean_positions(self):
         self.positions = [p for p in set(self.positions) if p.owner != None]
 
@@ -166,6 +239,7 @@ class BoardState(object):
 
     def _set(self, x, y, val):
         if val not in [None] + list(self.players): return False
+        if not self.position_exists(x, y): raise InvalidPosition()
         self._clear(x, y)
         p = None
         if val != None:
