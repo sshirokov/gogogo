@@ -251,7 +251,9 @@ class BoardMoveTests(unittest.TestCase):
 
 
     def test_game_ends_after_two_consecutive_passes(self):
-        self.assertTrue(False, "Back-to back passes should end a game")
+        self.board.move(None)
+        self.board.move(None)
+        self.assertTrue(self.board.game_over, "Back-to back passes should end a game")
 
 class BoardScoreTests(unittest.TestCase):
     setUp = default_setUp
