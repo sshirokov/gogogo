@@ -128,7 +128,6 @@ class BoardStateTests(unittest.TestCase):
              (5, 9)]]
         self.board._set(18, 18, "White")
         black_shapes = self.board.all_objects_of("Black")
-        print "Black shapes:", black_shapes
         white_shapes = self.board.all_objects_of("White")
         self.assertEqual(len(black_shapes), 2, "There are two shapes that black owns")
         self.assertEqual(len(white_shapes), 1, "There is one shape that white owns")

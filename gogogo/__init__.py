@@ -153,13 +153,13 @@ class BoardState(object):
             if self._get(x, y): return False
             self._set(x, y, player)
 
-            [self._set(p.x, p.y, None) and self.positions.remove(p)
-             for p in self.get_captured_by(player)]
+            [[self._clear(p.x, p.y) for p in shape.members]
+             for shape in self.get_captured_shapes_by(player)]
 
-            losses = self.get_captured_of(player)
+            losses = self.get_captured_shapes_of(player)
             if self.self_capture_allowed:
-                [self._set(p.x, p.y, None) and self.positions.remove(p)
-                 for p in losses]
+                [[self._clear(p.x, p.y) for p in shape.members]
+                 for shape in losses]
             elif losses:
                 self.restore_snapshot(snapshot)
                 return False
@@ -189,12 +189,17 @@ class BoardState(object):
     def get_opponents_of(self, player):
         return [p for p in self.players if p != player]
 
-    def get_captured_by(self, player):
-        return []
+    def get_captured_shapes_by(self, player):
+        captured = []
+        [captured.extend(shapes) for shapes in
+         [self.get_captured_shapes_of(oponnent)
+          for oponnent in self.get_opponents_of(player)]]
+        return captured
 
-    def get_captured_of(self, player):
-        shapes = self.all_objects_of(player)
-        return []
+    def get_captured_shapes_of(self, player):
+        return [shape for shape in
+                self.all_objects_of(player)
+                if len(shape.liberties) == 0]
 
     def all_objects_of(self, player):
         positions = [p for p in self.positions if p.owner == player]
@@ -236,6 +241,7 @@ class BoardState(object):
         def is_cleared_position(p):
             return (p.x, p.y) == (x, y)
         self.positions = [p for p in self.positions if not is_cleared_position(p)]
+        return self
 
     def _set(self, x, y, val):
         if val not in [None] + list(self.players): return False
