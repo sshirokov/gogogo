@@ -208,7 +208,8 @@ class BoardMoveTests(unittest.TestCase):
             self.board.move(2, 0)
 
             if not self.board.self_capture_allowed:
-                self.assertFalse(self.board.move(1, 0), "Self capture is not allowed")
+                m = self.board.move(1, 0)
+                self.assertFalse(m, "Self capture is not allowed")
                 self.assertEqual(self.board.player_turn(), self.board.players[0], "Should still be black's turn")
             else:
                 self.assertTrue(self.board.move(1, 0), "Self capture is allowed")
@@ -251,8 +252,10 @@ class BoardMoveTests(unittest.TestCase):
 
 
     def test_game_ends_after_two_consecutive_passes(self):
-        self.board.move(None)
-        self.board.move(None)
+        m = self.board.move(None)
+        self.assertTrue(m, "Black can pass")
+        m = self.board.move(None)
+        self.assertTrue(m, "White can pass")
         self.assertTrue(self.board.game_over, "Back-to back passes should end a game")
 
 class BoardScoreTests(unittest.TestCase):

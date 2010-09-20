@@ -134,6 +134,7 @@ class BoardState(object):
                         'height': 19,
                         'players': players or ['Black', 'White'],
                         'moves': [],
+                        'last_move_message': '',
                         'positions': [],
                         'signatures': [],
                         'self_capture_allowed': False,
@@ -158,8 +159,10 @@ class BoardState(object):
         snapshot = self.take_snapshot()
 
         if not passing:
-            if self._get(x, y): return False
-            self._set(x, y, player)
+            if self._get(x, y):
+                self.last_move_message = "Not empty"
+                return False
+            self._set(x, y, player, sign=False)
 
             [[self._clear(p.x, p.y) for p in shape.members]
              for shape in self.get_captured_shapes_by(player)]
@@ -171,16 +174,19 @@ class BoardState(object):
                  for shape in losses]
             elif losses:
                 self.restore_snapshot(snapshot)
+                self.last_move_message = "Self capture is not allowed"
                 return False
 
         #Make a move or pass
         passing_or_xy = passing and (passing,)  or (x, y)
         self.moves.append(Move(player, *passing_or_xy))
 
-        if not self.sign():
+        if not passing and not self.sign():
             self.restore_snapshot(snapshot)
+            self.last_move_message = "Repeated state"
             return False
 
+        self.last_move_message = "OK"
         return True
 
     @property
@@ -277,7 +283,8 @@ class BoardState(object):
         self.positions = [p for p in self.positions if not is_cleared_position(p)]
         return self
 
-    def _set(self, x, y, val):
+    def _set(self, x, y, val, **options):
+        sign = options.pop('sign', True)
         if val not in [None] + list(self.players): return False
         if not self.position_exists(x, y): raise InvalidPosition()
         self._clear(x, y)
@@ -286,7 +293,7 @@ class BoardState(object):
             p = Position(self, x, y, val)
             self.positions.append(p)
         self._clean_positions()
-        self.sign()
+        if sign: self.sign()
         return p or True
 
     def _get(self, x, y):
