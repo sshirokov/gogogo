@@ -199,18 +199,20 @@ class BoardMoveTests(unittest.TestCase):
         def step_1_move_to_empty_space():
             self.assertEqual(self.board.player_turn(), self.board.players[0], "It should be the first player's turn")
             m = self.board.move(6, 3)
-            print "Moved"
-            print self.board.dump_board()
             self.assertTrue(m, "Player can play empty intersection")
 
         def step_2_player_removes_opposing_liberty_free_stones():
             self.assertFalse(self.board._get(6, 4), "Player removes oposing stones with no liberties")
 
         def step_3_conditional_suicide():
+            self.board.move(2, 0)
+
             if not self.board.self_capture_allowed:
-                self.assertTrue(False, "Self capture is not allowed")
+                self.assertFalse(self.board.move(1, 0), "Self capture is not allowed")
+                self.assertEqual(self.board.player_turn(), self.board.players[0], "Should still be black's turn")
             else:
-                self.assertTrue(False, "Self capture is allowed")
+                self.assertTrue(self.board.move(1, 0), "Self capture is allowed")
+                self.assertEqual(self.board.player_turn(), self.board.players[1], "Should now be white's turn")
 
         [self.board._set(x, y, color) for (x, y, color) in [(bx, by, "Black") for (bx, by) in [(0, 0),
                                                                                                (5, 5), (6, 5), (7, 5),
@@ -222,7 +224,6 @@ class BoardMoveTests(unittest.TestCase):
 
                                                                                                (0, 1), (1, 1), (2, 1),
                                                                                                ]]]
-        print; self.board.dump_board()
 
         [step() for step in (step_1_move_to_empty_space,
                              step_2_player_removes_opposing_liberty_free_stones,

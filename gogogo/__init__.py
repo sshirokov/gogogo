@@ -14,6 +14,9 @@ class Move(object):
         if not self.passing:
             self.x, self.y = pass_or_x_y
 
+    def __repr__(self):
+        return "<Move: %s %s>" % (self.player, self.passing and "Pass" or (self.x, self.y))
+
 
 class TargettedPoint(object):
     def __init__(self, x, y, target):
@@ -82,6 +85,9 @@ class Shape(object):
                 sorted(self.members) == sorted(other.members))
 
 
+    def __repr__(self):
+        return "<Shape: size=%s>" % self.size
+
 
 
 class Position(object):
@@ -129,6 +135,7 @@ class BoardState(object):
                         'players': players or ['Black', 'White'],
                         'moves': [],
                         'positions': [],
+                        'self_capture_allowed': False,
                         },
                        **options)
         [setattr(self, k, v) for (k, v) in options.items()]
@@ -158,6 +165,7 @@ class BoardState(object):
 
             losses = self.get_captured_shapes_of(player)
             if self.self_capture_allowed:
+                self.dump_board()
                 [[self._clear(p.x, p.y) for p in shape.members]
                  for shape in losses]
             elif losses:
@@ -165,7 +173,7 @@ class BoardState(object):
                 return False
 
         #Make a move or pass
-        passing_or_xy = (passing or (x, y),)
+        passing_or_xy = passing and (passing,)  or (x, y)
         self.moves.append(Move(player, *passing_or_xy))
 
         return True
@@ -181,10 +189,6 @@ class BoardState(object):
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]
-
-    @property
-    def self_capture_allowed(self):
-        return False
 
     def get_opponents_of(self, player):
         return [p for p in self.players if p != player]
