@@ -118,6 +118,21 @@ class BoardStateTests(unittest.TestCase):
         self.assertTrue(shape2, "There is a shape that touches (6, 9)")
         self.assertNotEqual(shape1, shape2, "Two shapes are present because of a diagonal")
 
+    def test_board_can_find_all_shapes_for_player(self):
+        [self.board._set(x, y, "Black") for (x, y)
+         in [(10, 10),
+             (9, 10),
+             (8, 10),
+             (7, 9),
+             (6, 9),
+             (5, 9)]]
+        self.board._set(18, 18, "White")
+        black_shapes = self.board.all_objects_of("Black")
+        print "Black shapes:", black_shapes
+        white_shapes = self.board.all_objects_of("White")
+        self.assertEqual(len(black_shapes), 2, "There are two shapes that black owns")
+        self.assertEqual(len(white_shapes), 1, "There is one shape that white owns")
+
     def test_liberty_is_adjecent_empty_space_of_stone(self):
         p = self.board._set(1, 1, "Black")
         self.board._set(0, 1, "Black")
@@ -183,16 +198,32 @@ class BoardMoveTests(unittest.TestCase):
 
     def test_play_steps(self):
         def step_1_move_to_empty_space():
-            self.assertTrue(False, "Player can play empty intersection")
+            self.assertEqual(self.board.player_turn(), self.board.players[0], "It should be the first player's turn")
+            m = self.board.move(6, 3)
+            print "Moved"
+            print self.board.dump_board()
+            self.assertTrue(m, "Player can play empty intersection")
 
         def step_2_player_removes_opposing_liberty_free_stones():
-            self.assertTrue(False, "Player removes oposing stones with no liberties")
+            self.assertFalse(self.board._get(6, 4), "Player removes oposing stones with no liberties")
 
         def step_3_conditional_suicide():
-            if True: #TODO: Conditional
+            if not self.board.self_capture_allowed:
                 self.assertTrue(False, "Self capture is not allowed")
             else:
                 self.assertTrue(False, "Self capture is allowed")
+
+        [self.board._set(x, y, color) for (x, y, color) in [(bx, by, "Black") for (bx, by) in [(0, 0),
+                                                                                               (5, 5), (6, 5), (7, 5),
+                                                                                               (5, 4),         (7, 4),
+                                                                                               (5, 3),
+                                                                                               ]] +
+                                                           [(wx, wy, "White") for (wx, wy) in [(18, 18),
+                                                                                                       (6, 4),
+
+                                                                                               (0, 1), (1, 1), (2, 1),
+                                                                                               ]]]
+        print; self.board.dump_board()
 
         [step() for step in (step_1_move_to_empty_space,
                              step_2_player_removes_opposing_liberty_free_stones,
