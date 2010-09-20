@@ -230,7 +230,25 @@ class BoardMoveTests(unittest.TestCase):
                              step_3_conditional_suicide)]
 
     def test_turn_must_not_recreate_prior_state(self):
-        self.assertTrue(False, "A move can't create a boad state that existed in the past")
+        [self.board._set(x, y, color) for (x, y, color) in [(bx, by, "Black") for (bx, by) in [(0, 0),
+                                                                                                       (6, 6),
+                                                                                               (5, 5),
+                                                                                                       (6, 4),
+                                                                                               ]] +
+                                                           [(wx, wy, "White") for (wx, wy) in [(18, 18),
+                                                                                                       (7, 6),
+                                                                                               (6, 5),         (8, 5),
+                                                                                                       (7, 4),
+                                                                                               ]]]
+
+        #Black captures
+        self.board.move(7, 5)
+
+        #White tries to capture, but it's illegal as it would be the same as before last move
+        m = self.board.move(6, 5)
+        self.assertFalse(m, "A move can't create a boad state that existed in the past")
+
+
 
     def test_game_ends_after_two_consecutive_passes(self):
         self.assertTrue(False, "Back-to back passes should end a game")

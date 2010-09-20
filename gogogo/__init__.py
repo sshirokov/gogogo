@@ -135,6 +135,7 @@ class BoardState(object):
                         'players': players or ['Black', 'White'],
                         'moves': [],
                         'positions': [],
+                        'signatures': [],
                         'self_capture_allowed': False,
                         },
                        **options)
@@ -176,16 +177,38 @@ class BoardState(object):
         passing_or_xy = passing and (passing,)  or (x, y)
         self.moves.append(Move(player, *passing_or_xy))
 
+        if not self.sign():
+            self.restore_snapshot(snapshot)
+            return False
+
         return True
 
+    def sign(self):
+        try:
+            self.signatures.index(self.signature)
+            return False
+        except ValueError:
+            self.signatures.append(self.signature)
+
+        return True
+
+    @property
+    def signature(self):
+        '''A hash of the current game state, to be certain we won't be repeating it'''
+        import hashlib
+        sig = hashlib.sha512()
+        [sig.update(str(pos)) for pos in sorted(self.positions)]
+        return sig.hexdigest()
+    
     def take_snapshot(self):
         from copy import copy
         return {'width': self.width,
                 'height': self.height,
                 'players': copy(self.players),
                 'moves': copy(self.moves),
-                'positions': copy(self.positions)}
-                
+                'positions': copy(self.positions),
+                'signatures': copy(self.signatures),}
+
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]
@@ -256,6 +279,7 @@ class BoardState(object):
             p = Position(self, x, y, val)
             self.positions.append(p)
         self._clean_positions()
+        self.sign()
         return p or True
 
     def _get(self, x, y):
