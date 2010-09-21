@@ -9,7 +9,9 @@ import gogogo
 def default_setUp(self):
     self.new_board = lambda *args, **kwargs: gogogo.BoardState(*args, **kwargs)
     self.board = self.new_board()
-
+    def set_board_positions(**positions):
+        pass
+    self.set_board_positions = set_board_positions
 
 class SimpleBoardStateTests(unittest.TestCase):
     setUp = default_setUp
@@ -286,17 +288,26 @@ class BoardScoreTests(unittest.TestCase):
         self.assertEqual(self.board.get_owner_of(4, 0), None, "Empty space that connects to more than one color is neutral")
 
     def test_determine_player_area(self):
+        self.set_board_positions(Black=[(0, 5), (1, 5), (2, 5),
+                                                        (2, 4),
+                                                        (2, 3),
+                                                        (2, 2),
+                                                        (2, 1),
+                                                        (2, 0),
+                                        ],
+                                 White=[(18, 18),
+                                        (3, 2), (4, 2), (5, 2), (6, 2),
+                                                                (6, 1),
+                                                                (6, 0),
+                                        ])
+        print; self.board.dump_board()
         self.assertTrue(False, "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
 
     def test_determine_winner(self):
         self.assertTrue(False, "Winner should be the player with the highest area")
-        
+
     def test_understand_draw(self):
         self.assertTrue(False, "Equal scores draw the game")
-
-    
-
-
 
 if __name__ == '__main__':
     unittest.main()
