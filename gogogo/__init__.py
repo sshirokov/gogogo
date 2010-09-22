@@ -102,11 +102,7 @@ class Position(object):
 
     @property
     def edges(self):
-        return [pos for pos in [(self.x + 1, self.y),
-                                (self.x - 1, self.y),
-                                (self.x, self.y + 1),
-                                (self.x, self.y - 1)]
-                if self.board.position_exists(*pos)]
+        return self.board.neighbors_of(self)
 
     @property
     def liberties(self):
@@ -147,7 +143,7 @@ class BoardState(object):
         [setattr(self, k, v) for (k, v) in options.items()]
         if not self.validate(): raise HistoryInvalid()
 
-    def neighbors_of(self, pos_or_loc, transform=lambda i: i, test=lambda p: True):
+    def neighbors_of(self, pos_or_loc, transform=lambda *i: i, test=lambda p: True):
         def coord(pp, axis):
             v = getattr(pp, axis, None)
             if v is None: v = pp[{'x': 0, 'y': 1}[axis]]
