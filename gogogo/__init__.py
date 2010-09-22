@@ -52,6 +52,7 @@ class Shape(object):
         self.members = []
         if not self.initial: raise NotValidShape()
         self.discover_members()
+        self.owner = len(self.members) and getattr(self.members[0], 'owner', None)
 
     @property
     def size(self):

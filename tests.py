@@ -133,6 +133,7 @@ class BoardStateTests(unittest.TestCase):
         white_shapes = self.board.all_objects_of("White")
         self.assertEqual(len(black_shapes), 2, "There are two shapes that black owns")
         self.assertEqual(len(white_shapes), 1, "There is one shape that white owns")
+        self.assertEqual(black_shapes[0].owner, "Black", "Black should own black shapes")
 
     def test_liberty_is_adjecent_empty_space_of_stone(self):
         p = self.board._set(1, 1, "Black")
