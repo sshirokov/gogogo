@@ -48,7 +48,7 @@ class TargettedPoint(object):
 class Shape(object):
     def __init__(self, board, x, y):
         self.board = board
-        self.initial = board._get(x, y)
+        self.initial = board._get(x, y) or (x, y)
         self.members = []
         if not self.initial: raise NotValidShape()
         self.discover_members()
@@ -68,13 +68,26 @@ class Shape(object):
         self.members = []
 
         def neighbors_of_same_owner(p):
+            def coord(pp, axis):
+                v = getattr(pp, axis, None)
+                if v is None: v = pp[0]
+                return v
+            X = lambda pp: coord(pp, 'x')
+            Y = lambda pp: coord(pp, 'y')
+
+            def point_considered_for_p(pp):
+                if type(pp) != type(p): return False
+                if type(p) == tuple: return True
+                if p.owner == pp.owner: return True
+                return False
+                
             return [point for point in
-                    [self.board._get(*loc)
-                     for loc in [(p.x - 1, p.y),
-                                 (p.x + 1, p.y),
-                                 (p.x, p.y - 1),
-                                 (p.x, p.y + 1)]]
-                    if point and point.owner == p.owner]
+                    [self.board.position_exists(*loc) and self.board._get(*loc) or loc
+                     for loc in [(X(p) - 1, Y(p)),
+                                 (X(p) + 1, Y(p)),
+                                 (X(p), Y(p) - 1),
+                                 (X(p), Y(p) + 1)]]
+                    if point and point_considered_for_p(point)]
         def walk_network(point):
             if point in self.members: return
             self.members.append(point)
@@ -87,7 +100,7 @@ class Shape(object):
 
 
     def __repr__(self):
-        return "<Shape: size=%s>" % self.size
+        return "<Shape: size=%s owner=%s>" % (self.size, self.owner)
 
 
 
