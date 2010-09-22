@@ -48,11 +48,18 @@ class TargettedPoint(object):
 class Shape(object):
     def __init__(self, board, x, y):
         self.board = board
-        self.initial = board._get(x, y) or (x, y)
+        self.initial = board._get(x, y) or (self.board.position_exists(x, y) and (x, y))
         self.members = []
         if not self.initial: raise NotValidShape()
         self.discover_members()
-        self.owner = len(self.members) and getattr(self.members[0], 'owner', None)
+
+    @property
+    def owner(self):
+        return self.type or ("TODO: Don't know owner")
+
+    @property
+    def type(self):
+        return getattr(self.members[0], 'owner', None)
 
     @property
     def size(self):
@@ -90,7 +97,7 @@ class Shape(object):
 
 
     def __repr__(self):
-        return "<Shape: size=%s owner=%s>" % (self.size, self.owner)
+        return "<Shape: size=%s owner=%s type=%s>" % (self.size, self.owner, self.type)
 
 
 
