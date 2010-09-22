@@ -353,10 +353,8 @@ class BoardState(object):
             '''Add weighted neighbors of node to the queue'''
             v = self._get(node.x, node.y)
             def neighbors_of_same_state(p):
-                maybe = [(p.x - 1, p.y),
-                         (p.x + 1, p.y),
-                         (p.x, p.y - 1),
-                         (p.x, p.y + 1)]
+                maybe = self.neighbors_of(p)
+                #TODO: This can probably be done with a more thought out test/tranform combo
                 v = getattr(self._get(p.x, p.y), 'owner', None)
                 return [TargettedPoint(*loc + (finish,)) for loc in maybe if self.position_exists(*loc) and
                         getattr(self._get(*loc), 'owner', None) == v]
