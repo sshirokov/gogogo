@@ -10,7 +10,8 @@ def default_setUp(self):
     self.new_board = lambda *args, **kwargs: gogogo.BoardState(*args, **kwargs)
     self.board = self.new_board()
     def set_board_positions(**positions):
-        pass
+        for color, locs in positions.items():
+            [self.board._set(x, y, color) for (x, y) in locs]
     self.set_board_positions = set_board_positions
 
 class SimpleBoardStateTests(unittest.TestCase):
@@ -107,13 +108,12 @@ class BoardStateTests(unittest.TestCase):
         self.assertTrue(all_present, "A shape should be able to tell me its members")
 
     def test_two_complex_shapes_are_distinct(self):
-        [self.board._set(x, y, "Black") for (x, y)
-         in [(10, 10),
-             (9, 10),
-             (8, 10),
-             (7, 9),
-             (6, 9),
-             (5, 9)]]
+        self.set_board_positions(Black=((10, 10),
+                                        (9, 10),
+                                        (8, 10),
+                                        (7, 9),
+                                        (6, 9),
+                                        (5, 9)))
         shape1 = self.board.shape_at(10,10)
         self.assertTrue(shape1, "There is a shape that touches (10, 10)")
         shape2 = self.board.shape_at(6, 9)
