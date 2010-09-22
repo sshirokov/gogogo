@@ -279,18 +279,11 @@ class BoardState(object):
         else:
             visited = []
             touches = set()
-            def edges_of(x, y):
-                return [pos for pos in [(x, y + 1),
-                                        (x, y - 1),
-                                        (x + 1, y),
-                                        (x - 1, y)]
-                        if self.position_exists(*pos)]
             def visit(x, y):
                 if (x, y) in visited: return
                 if len(touches) > 1: return
                 visited.append((x, y))
-                edges = edges_of(x, y)
-                [touches.add(p.owner) for p in [self._get(*loc) for loc in edges]
+                [touches.add(p.owner) for p in [self._get(*loc) for loc in self.neighbors_of(x, y)]
                  if p]
                 [visit(*loc) for loc in edges if not self._get(*loc)]
             visit(x, y)
