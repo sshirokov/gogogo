@@ -70,7 +70,7 @@ class Shape(object):
         def neighbors_of_same_owner(p):
             def coord(pp, axis):
                 v = getattr(pp, axis, None)
-                if v is None: v = pp[0]
+                if v is None: v = pp[{'x': 0, 'y': 1}[axis]]
                 return v
             X = lambda pp: coord(pp, 'x')
             Y = lambda pp: coord(pp, 'y')
@@ -80,14 +80,15 @@ class Shape(object):
                 if type(p) == tuple: return True
                 if p.owner == pp.owner: return True
                 return False
-                
+
             return [point for point in
-                    [self.board.position_exists(*loc) and self.board._get(*loc) or loc
+                    [self.board.position_exists(*loc) and (self.board._get(*loc) or loc)
                      for loc in [(X(p) - 1, Y(p)),
                                  (X(p) + 1, Y(p)),
                                  (X(p), Y(p) - 1),
                                  (X(p), Y(p) + 1)]]
                     if point and point_considered_for_p(point)]
+
         def walk_network(point):
             if point in self.members: return
             self.members.append(point)
