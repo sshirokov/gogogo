@@ -68,26 +68,15 @@ class Shape(object):
         self.members = []
 
         def neighbors_of_same_owner(p):
-            def coord(pp, axis):
-                v = getattr(pp, axis, None)
-                if v is None: v = pp[{'x': 0, 'y': 1}[axis]]
-                return v
-            X = lambda pp: coord(pp, 'x')
-            Y = lambda pp: coord(pp, 'y')
-
             def point_considered_for_p(pp):
+                if not pp: return False
                 if type(pp) != type(p): return False
                 if type(p) == tuple: return True
                 if p.owner == pp.owner: return True
                 return False
 
-            return [point for point in
-                    [self.board.position_exists(*loc) and (self.board._get(*loc) or loc)
-                     for loc in [(X(p) - 1, Y(p)),
-                                 (X(p) + 1, Y(p)),
-                                 (X(p), Y(p) - 1),
-                                 (X(p), Y(p) + 1)]]
-                    if point and point_considered_for_p(point)]
+            return self.board.neighbors_of(p, transform=lambda *loc: self.board._get(*loc) or loc,
+                                              test=point_considered_for_p)
 
         def walk_network(point):
             if point in self.members: return
@@ -157,6 +146,20 @@ class BoardState(object):
                        **options)
         [setattr(self, k, v) for (k, v) in options.items()]
         if not self.validate(): raise HistoryInvalid()
+
+    def neighbors_of(self, pos_or_loc, transform=lambda i: i, test=lambda p: True):
+        def coord(pp, axis):
+            v = getattr(pp, axis, None)
+            if v is None: v = pp[{'x': 0, 'y': 1}[axis]]
+            return v
+        X = lambda pp: coord(pp, 'x')
+        Y = lambda pp: coord(pp, 'y')
+        return [p for p in [transform(*pair) for pair in ((X(pos_or_loc) - 1, Y(pos_or_loc)),
+                                                         (X(pos_or_loc) + 1, Y(pos_or_loc)),
+                                                         (X(pos_or_loc), Y(pos_or_loc) - 1),
+                                                         (X(pos_or_loc), Y(pos_or_loc) + 1))
+                            if self.position_exists(*pair)]
+                if test(p)]
 
     def move(self, *args, **kwargs):
         '''
