@@ -14,6 +14,18 @@ class Move(object):
         if not self.passing:
             self.x, self.y = pass_or_x_y
 
+    def as_json(self):
+        return dict({
+                '__type__': 'Move',
+                'player': self.player,
+                'passing': self.passing,
+                },
+                **dict([
+                    (key, getattr(self, key))
+                    for key in ['x', 'y']
+                    if hasattr(self, key)
+                ]))
+
     def __repr__(self):
         return "<Move: %s %s>" % (self.player, self.passing and "Pass" or (self.x, self.y))
 

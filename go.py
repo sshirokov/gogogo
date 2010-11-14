@@ -7,6 +7,7 @@ def main(self, *args):
     print "Board: ", board
     board.move(5, 5)
     board.move(10, 4)
+    board.move(None)
     board.dump_board()
     print board.as_json()
 
