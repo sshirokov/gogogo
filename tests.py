@@ -82,10 +82,10 @@ class BoardStateSimpleGroupTests(unittest.TestCase):
 
 class BoardStateTests(unittest.TestCase):
     setUp = default_setUp
-    
+
     def tearDown(self):
         pass
-    
+
     def test_complex_shape_is_connected(self):
         b = 'Black'
         all = [self.board._set(0, 0, b),
@@ -261,9 +261,34 @@ class BoardMoveTests(unittest.TestCase):
         self.assertTrue(m, "White can pass")
         self.assertTrue(self.board.game_over, "Back-to back passes should end a game")
 
+class BoardSerializationTests(unittest.TestCase):
+    setUp = default_setUp
+
+    def tearDown(self):
+        pass
+
+    def test_board_can_become_json(self):
+        self.assertTrue(len(self.board.as_json()) >= 2, "Serialization must reply with a string of length")
+        self.assertTrue(self.board.as_json().startswith('{') and self.board.as_json().endswith('}'), "JSON encodings must begin with { and end with }")
+
+        import json
+        try: json.loads(self.board.as_json())
+        except: self.fail("JSON returned must be valid")
+
+    def test_board_with_positions_can_json(self):
+        blank_json = self.board.as_json()
+        self.board._set(5, 5, "Black")
+        self.board._set(1, 2, "White")
+        after_json = self.board.as_json()
+        self.assertNotEqual(blank_json, after_json, "JSON serialization should changes with board")
+        self.assertTrue(len(blank_json) < len(after_json), "Size of after json should increased since we added data")
+        self.board.dump_board()
+
+
+
 class BoardScoreTests(unittest.TestCase):
     setUp = default_setUp
-    
+
     def tearDown(self):
         pass
 
