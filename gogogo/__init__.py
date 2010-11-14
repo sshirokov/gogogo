@@ -14,6 +14,14 @@ class Move(object):
         if not self.passing:
             self.x, self.y = pass_or_x_y
 
+    @classmethod
+    def deserialize(cls, **opts):
+        return cls(opts.pop('player'),
+                   *(opts.pop('passing') and (None,) \
+                         or (opts.pop('x'), opts.pop('y'))),
+                   **opts)
+
+
     def as_json(self):
         return dict({
                 '__type__': 'Move',
@@ -130,6 +138,14 @@ class Position(object):
         self.tag = None
         [setattr(self, key, val) for (key, val) in options]
 
+    @classmethod
+    def deserialize(cls, **opts):
+        return cls(cls,
+                   opts.pop('x'),
+                   opts.pop('y'),
+                   opts.pop('owner'),
+                   **opts)
+
     def as_json(self):
         return {
             '__type__': "Position",
@@ -180,6 +196,11 @@ class BoardState(object):
                        **options)
         [setattr(self, k, v) for (k, v) in options.items()]
         if not self.validate(): raise HistoryInvalid()
+
+    def __eq__(self, other):
+        if isinstance(other, BoardState):
+            return self.signatures == other.signatures and (len(self.positions) == len(other.positions))
+        return False
 
     def neighbors_of(self, *pos_or_loc, **kwargs):
         transform = kwargs.pop('transform', lambda *i: i)
@@ -284,8 +305,12 @@ class BoardState(object):
         return json.dumps(self.take_snapshot(), cls=GoJSONEncoder)
 
     @classmethod
-    def from_json(cls, json):
-        pass
+    def from_json(cls, jstr):
+        from gogogo.util import board_object_hook
+        obj = json.loads(jstr, object_hook=board_object_hook)
+        board = BoardState()
+        board.restore_snapshot(obj)
+        return board
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]
