@@ -280,8 +280,12 @@ class BoardState(object):
 
     def as_json(self):
         from gogogo.util import GoJSONEncoder
-        
+
         return json.dumps(self.take_snapshot(), cls=GoJSONEncoder)
+
+    @classmethod
+    def from_json(cls, json):
+        pass
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]

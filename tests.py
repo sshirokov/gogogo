@@ -284,6 +284,14 @@ class BoardSerializationTests(unittest.TestCase):
         self.assertTrue(len(blank_json) < len(after_json), "Size of after json should increased since we added data")
         self.board.dump_board()
 
+    def test_can_deserialize_board_with_same_positions(self):
+        self.board.move(0, 0)
+        self.board.move(1, 1)
+        self.board.move(5, 5)
+        self.board.move(10, 10)
+        new_board = gogogo.BoardState.from_json(self.board.as_json())
+        self.assertTrue(False, "New board should have the same positions as old board")
+
 
 
 class BoardScoreTests(unittest.TestCase):
