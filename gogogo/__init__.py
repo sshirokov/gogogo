@@ -118,6 +118,14 @@ class Position(object):
         self.tag = None
         [setattr(self, key, val) for (key, val) in options]
 
+    def as_json(self):
+        return {
+            '__type__': "Position",
+            'x': self.x,
+            'y': self.y,
+            'owner': self.owner,
+        }
+
     @property
     def edges(self):
         return self.board.neighbors_of(self)
@@ -259,7 +267,9 @@ class BoardState(object):
                 'signatures': copy(self.signatures),}
 
     def as_json(self):
-        return json.dumps(self.take_snapshot())
+        from gogogo.util import GoJSONEncoder
+        
+        return json.dumps(self.take_snapshot(), cls=GoJSONEncoder)
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]
