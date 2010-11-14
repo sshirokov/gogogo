@@ -302,9 +302,10 @@ class BoardScoreTests(unittest.TestCase):
                                                                 (6, 0),
                                         ])
         shape = self.board.shape_at(0, 0)
-        print; self.board.dump_board(marks={'s': shape.members})
         self.assertTrue(shape, "Shapes of empty squares can be considered for area calculation")
-        self.assertTrue(False, "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
+        self.assertEqual(shape.owner, "Black", "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
+        shape = self.board.shape_at(3, 0)
+        self.assertEqual(shape.owner, None, "Areas that are contested have no owner")
 
     def test_determine_winner(self):
         self.assertTrue(False, "Winner should be the player with the highest area")

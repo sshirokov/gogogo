@@ -56,7 +56,17 @@ class Shape(object):
     @property
     def owner(self):
         owned = True
-        return self.type or "TODO: Fuck"
+        if self.type: return self.type
+        else:
+            touches = set()
+            for member in self.members:
+                neighbors = [p for p in self.board.neighbors_of(member) if p not in self.members]
+                [touches.add(self.board._get(*p).owner)
+                 for p in neighbors
+                 if self.board._get(*p)]
+            if len(touches) > 1: touches = None
+            else: touches = touches.pop()
+            return touches
 
     @property
     def type(self):
