@@ -277,6 +277,21 @@ class BoardState(object):
                 self.all_objects_of(player)
                 if len(shape.liberties) == 0]
 
+    def all_territory_of(self, player):
+        objects = self.all_objects_of(player)
+        liberties = reduce(lambda acc, a: acc + a,
+                           [o.liberties for o in objects],
+                           [])
+        ground = []
+        [ground.append(self.shape_at(*p))
+         for p in liberties
+         if p not in reduce(lambda acc, a: acc + a,
+                            [g.members for g in ground],
+                            [])]
+        ground = [g for g in ground if g.owner == player]
+        return ground
+
+
     def all_objects_of(self, player):
         positions = [p for p in self.positions if p.owner == player]
         shapes = []
@@ -402,6 +417,24 @@ class BoardState(object):
     def shape_at(self, x, y):
         try: return Shape(self, x, y)
         except NotValidShape: return None
+
+    def scores(self):
+        scores = dict([(player, self.all_objects_of(player)) for player in self.players])
+        for player in scores.keys():
+            scores[player] += self.all_territory_of(player)
+        [scores.update({player: sum([s.size for s in score])})
+         for (player, score) in scores.items()]
+        return scores
+
+    @property
+    def winner(self):
+        scores = self.scores()
+        if len(set(scores.values())) == 1: return None
+        return sorted(scores.items(),
+                      key=lambda v: v[1],
+                      reverse=True)[0][0]
+
+
 
     def _distance(self, a, b):
         if type(a) == tuple and type(b) == tuple: (x1, y1), (x2, y2) = a, b

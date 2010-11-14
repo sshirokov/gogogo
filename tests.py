@@ -308,10 +308,26 @@ class BoardScoreTests(unittest.TestCase):
         self.assertEqual(shape.owner, None, "Areas that are contested have no owner")
 
     def test_determine_winner(self):
-        self.assertTrue(False, "Winner should be the player with the highest area")
+        self.set_board_positions(Black=[(0, 5), (1, 5), (2, 5),
+                                                        (2, 4),
+                                                        (2, 3),
+                                                        (2, 2),
+                                                        (2, 1),
+                                                        (2, 0),
+                                        ],
+                                 White=[(18, 18),
+                                        (0, 6), (1, 6), (2, 6), (3, 6),
+                                                                (3, 5),
+                                                                (3, 4),
+                                                                (3, 3),
+                                                                (3, 2),
+                                                                (3, 1),
+                                                                (3, 0),
+                                        ])
+        self.assertEqual(self.board.winner, "White", "Winner should be the player with the highest area")
 
     def test_understand_draw(self):
-        self.assertTrue(False, "Equal scores draw the game")
+        self.assertEqual(self.board.winner, None, "Equal scores draw the game")
 
 if __name__ == '__main__':
     unittest.main()
