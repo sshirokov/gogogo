@@ -301,9 +301,8 @@ class BoardScoreTests(unittest.TestCase):
                                                                 (6, 1),
                                                                 (6, 0),
                                         ])
-        print; self.board.dump_board()
         shape = self.board.shape_at(0, 0)
-        shape = None
+        print; self.board.dump_board(marks={'s': shape.members})
         self.assertTrue(shape, "Shapes of empty squares can be considered for area calculation")
         self.assertTrue(False, "Intersections belong to players area if the player ownes the intersection, or has a stone on it")
 

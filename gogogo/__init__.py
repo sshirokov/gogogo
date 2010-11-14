@@ -55,7 +55,8 @@ class Shape(object):
 
     @property
     def owner(self):
-        return self.type or ("TODO: Don't know owner")
+        owned = True
+        return self.type or "TODO: Fuck"
 
     @property
     def type(self):
@@ -150,11 +151,16 @@ class BoardState(object):
         [setattr(self, k, v) for (k, v) in options.items()]
         if not self.validate(): raise HistoryInvalid()
 
-    def neighbors_of(self, pos_or_loc, transform=lambda *i: i, test=lambda p: True):
+    def neighbors_of(self, *pos_or_loc, **kwargs):
+        transform = kwargs.pop('transform', lambda *i: i)
+        test = kwargs.pop('test', lambda p: True)
+        if len(pos_or_loc) == 1: pos_or_loc = pos_or_loc[0]
+
         def coord(pp, axis):
             v = getattr(pp, axis, None)
             if v is None: v = pp[{'x': 0, 'y': 1}[axis]]
             return v
+
         X = lambda pp: coord(pp, 'x')
         Y = lambda pp: coord(pp, 'y')
         return [p for p in [transform(*pair) for pair in ((X(pos_or_loc) - 1, Y(pos_or_loc)),
@@ -292,7 +298,7 @@ class BoardState(object):
                 visited.append((x, y))
                 [touches.add(p.owner) for p in [self._get(*loc) for loc in self.neighbors_of(x, y)]
                  if p]
-                [visit(*loc) for loc in edges if not self._get(*loc)]
+                [visit(*loc) for loc in self.neighbors_of(*loc) if not self._get(*loc)]
             visit(x, y)
             if len(touches) == 1: o = touches.pop()
         return o
