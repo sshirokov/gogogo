@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 import sys
 from gogogo import BoardState
+from gogogo.game import Game
 
 def main(self, *args):
-    board = BoardState('Black', 'White')
-    print "Board: ", board
-    board.move(5, 5)
-    board.move(10, 4)
-    board.move(None)
-    board.dump_board()
-    print board.as_json()
+
+    game = Game()
+    print "Game:", game
 
 if __name__ == "__main__":
     main(sys.argv[0], *sys.argv[:1])
