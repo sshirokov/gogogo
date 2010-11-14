@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, math
+import sys, math, json
 
 class BoardError(Exception): pass
 class HistoryInvalid(BoardError): pass
@@ -258,6 +258,8 @@ class BoardState(object):
                 'positions': copy(self.positions),
                 'signatures': copy(self.signatures),}
 
+    def as_json(self):
+        return json.dumps(self.take_snapshot())
 
     def restore_snapshot(self, snap):
         [setattr(self, name, value) for (name, value) in snap.items()]
