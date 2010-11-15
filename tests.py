@@ -289,8 +289,10 @@ class BoardSerializationTests(unittest.TestCase):
         self.board.move(5, 5)
         self.board.move(10, 10)
         new_board = gogogo.BoardState.from_json(self.board.as_json())
-        self.assertTrue(new_board == self.board,
+        self.assertEqual(new_board, self.board,
                         "New board should have the same positions as old board")
+        self.assertEqual(new_board.as_json(), self.board.as_json(),
+                         "Deserialized and original JSON's should match")
 
 
 
