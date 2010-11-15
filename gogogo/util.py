@@ -8,7 +8,10 @@ class GoJSONEncoder(json.JSONEncoder):
             return o.as_json()
         return super(GoJSONEncoder, self).default(o)
 
-def board_object_hook(d):
+def _board_object_hook(d, replace=None):
+    '''
+    replace param in the form {prop, val}
+    '''
     if '__type__' in d:
         o_type = d.pop('__type__')
         Class = getattr(
@@ -16,5 +19,11 @@ def board_object_hook(d):
             o_type,
             d
         )
-        return Class.deserialize(**d)
+        obj = Class.deserialize(**d)
+        [setattr(obj, name, val)
+         for name, val in replace.items()]
+        return obj
     return d
+
+def make_board_object_hook(replace=None):
+    return lambda d: _board_object_hook(d, replace)

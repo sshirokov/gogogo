@@ -289,9 +289,6 @@ class BoardSerializationTests(unittest.TestCase):
         self.board.move(5, 5)
         self.board.move(10, 10)
         new_board = gogogo.BoardState.from_json(self.board.as_json())
-        print; new_board.dump_board()
-        print "New board:", new_board
-        print "Board of 0, 0:", new_board._get(0, 0).board
         self.assertTrue(new_board == self.board,
                         "New board should have the same positions as old board")
 

@@ -306,9 +306,10 @@ class BoardState(object):
 
     @classmethod
     def from_json(cls, jstr):
-        from gogogo.util import board_object_hook
-        obj = json.loads(jstr, object_hook=board_object_hook)
+        import uuid
+        from gogogo.util import make_board_object_hook
         board = BoardState()
+        obj = json.loads(jstr, object_hook=make_board_object_hook(replace={'board': board}))
         board.restore_snapshot(obj)
         return board
 
