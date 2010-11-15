@@ -16,7 +16,7 @@ Version controlled Go game/client/library
   $ go-go.py
 ** Side Effects
 *** This will create a `pwd`/data/default directory as a bare git repo
-    It will store the game board there
+    It will store the game board there as board.json
 *** Remove the repo to remove state
 ** Controls
    The default driver will tell you when your game is over and the score
