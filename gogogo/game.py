@@ -1,6 +1,9 @@
 import uuid
 import os
 
+from dulwich.repo import Repo
+from dulwich.objects import Tree, Blob
+
 from gogogo import BoardState
 
 DEFAULTS = dict(
@@ -8,7 +11,7 @@ DEFAULTS = dict(
     white="White",
     x=19,
     y=19,
-    data='./data/{name}/'
+    data=os.path.join('.', 'data', '{name}')
 )
 
 class Game(object):
@@ -17,10 +20,23 @@ class Game(object):
         self.name = name or uuid.uuid4().hex
         self.options = dict(DEFAULTS, **options)
         self.options['data'] = self.options['data'].format(name=self.name)
+        self.new = False
 
         if not os.path.exists(self.options['data']):
             os.makedirs(self.options['data'])
-            
+            self.repo = Repo.init_bare(self.options['data'])
+            self.new = True
+        else:
+            self.repo = Repo(self.options['data'])
+
+        self.board = self.reload_board()
+
+    def reload_board(self):
+        pass
+
+    def save(self, message="Forced commit"):
+        pass
+
     def __unicode__(self):
         return "Game: {name} {black} vs {white} on {x}x{y} from {data}".format(
                  name=self.name,
