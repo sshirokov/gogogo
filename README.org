@@ -26,3 +26,6 @@ Version controlled Go game/client/library
     $ go-go.py x y #(0,0) -> (18, 18) ; (x, y) with (0,0) at bottom right (18, 18) top right
 *** Skip
     $ go-go.py skip
+
+* TODO-list
+** TODO Maintain multiple branches
