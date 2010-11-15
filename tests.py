@@ -5,6 +5,7 @@ http://en.wikipedia.org/wiki/Rules_of_Go
 '''
 import unittest
 import gogogo
+import gogogo.game as game
 
 def default_setUp(self):
     self.new_board = lambda *args, **kwargs: gogogo.BoardState(*args, **kwargs)
@@ -265,11 +266,21 @@ class BoardMoveTests(unittest.TestCase):
         self.assertTrue(m, "White can pass")
         self.assertTrue(self.board.game_over, "Back-to back passes should end a game")
 
-class BoardSerializationTests(unittest.TestCase):
-    setUp = default_setUp
+class GameTests(unittest.TestCase):
+    def setUp(self):
+        pass
 
     def tearDown(self):
         pass
+
+    def test_game_gets_uuid_name(self):
+        g = game.Game()
+        self.assertTrue(g.name, "A game should get a default name")
+        self.assertEqual(len(g.name), 32, "A default name should be a uuid in hex")
+
+
+class BoardSerializationTests(unittest.TestCase):
+    setUp = default_setUp
 
     def test_board_can_become_json(self):
         self.assertTrue(len(self.board.as_json()) >= 2, "Serialization must reply with a string of length")

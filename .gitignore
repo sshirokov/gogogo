@@ -1,2 +1,5 @@
 *.pyc
 *~
+data/*
+*.egg-info
+ve/*
