@@ -255,6 +255,10 @@ class BoardMoveTests(unittest.TestCase):
 
 
     def test_game_ends_after_two_consecutive_passes(self):
+        self.assertFalse(self.board.game_over, "Game should not be over before it starts")
+        self.board.move(1, 1)
+        self.board.move(2, 2)
+        self.assertFalse(self.board.game_over, "Game should not be over before after some moves")
         m = self.board.move(None)
         self.assertTrue(m, "Black can pass")
         m = self.board.move(None)
