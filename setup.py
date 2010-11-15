@@ -11,5 +11,5 @@ setup(
 
     packages    = ['gogogo'],
 
-    scripts     = ['gogogo.py']
+    scripts     = ['go-go.py']
 )
