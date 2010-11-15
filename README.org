@@ -1,0 +1,22 @@
+Version controlled Go game/client/library
+
+* INSTALL
+  $ git clone git://github.com/sshirokov/gogogo.git
+  $ cd gogogo
+  $ virtualenv --no-site-packages ve
+  $ . ve/bin/activate
+  $ pip install -r requirements.txt
+  $ python setup.py develop
+  $ go-go.py
+** Side Effects
+*** This will create a `pwd`/data/default directory as a bare git repo
+    It will store the game board there
+*** Remove the repo to remove state
+** Controls
+   The default driver will tell you when your game is over and the score
+*** Show state
+    $ go-go.py
+*** Move
+    $ go-go.py x y #(0,0) -> (18, 18) ; (x, y) with (0,0) at bottom right (18, 18) top right
+*** Skip
+    $ go-go.py skip
