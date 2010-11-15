@@ -20,6 +20,7 @@ class Game(object):
 
         if not os.path.exists(self.options['data']):
             os.makedirs(self.options['data'])
+            
     def __unicode__(self):
         return "Game: {name} {black} vs {white} on {x}x{y} from {data}".format(
                  name=self.name,
