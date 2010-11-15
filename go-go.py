@@ -11,9 +11,10 @@ def main(self, *args):
     elif len(args) == 2: game.move(int(args[0]), int(args[1]))
     game.board.dump_board()
     if game.board.game_over:
-        print "Game over:", game.board.scores()
+        print "Game over:", game.scores()
+        print "Winner:", game.winner() or "Tie"
     else:
-        print "Next:", game.board.player_turn()
+        print "Next:", game.who()
 
 if __name__ == "__main__":
     main(sys.argv[0], *sys.argv[1:])

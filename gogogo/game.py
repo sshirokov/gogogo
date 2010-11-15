@@ -84,6 +84,15 @@ class Game(object):
                                                                    maybe=is_or_isnt))
         return self.board.game_over or self.board.player_turn()
 
+    def who(self):
+        return self.board.player_turn()
+
+    def scores(self):
+        return self.board.scores()
+
+    def winner(self):
+        return self.board.winner
+
     def __unicode__(self):
         return "Game: {name} {black} vs {white} on {x}x{y} from {data} :: {board}".format(
                  name=self.name,
