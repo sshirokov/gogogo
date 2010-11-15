@@ -270,7 +270,7 @@ class BoardState(object):
     @property
     def game_over(self):
         if len(self.moves) >= 2:
-            return reduce(lambda acc, i: acc and i.passing, self.moves[:-2], True)
+            return reduce(lambda acc, i: acc and i.passing, self.moves[-2:], True)
         return False
 
     def sign(self):
