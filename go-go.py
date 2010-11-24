@@ -2,6 +2,7 @@
 import sys
 from gogogo import BoardState
 from gogogo.game import Game
+from optparse import OptionParser
 
 def options_arguments_and_parser():
     parser = OptionParser()
