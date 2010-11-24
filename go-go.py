@@ -3,8 +3,9 @@ import sys
 from gogogo import BoardState
 from gogogo.game import Game
 
-def main(self, *args):
-    game = Game('default')
+
+def main(name, x=None, y=None, **options):
+    game = Game(name)
     print "Game:", game
     print "-args:", args
     if 'skip' in args: game.skip()
