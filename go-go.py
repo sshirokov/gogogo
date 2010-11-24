@@ -24,3 +24,4 @@ def main(name, x=None, y=None, **options):
 
 if __name__ == "__main__":
     main(sys.argv[0], *sys.argv[1:])
+    options, args, parser = options_arguments_and_parser()
