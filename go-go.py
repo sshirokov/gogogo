@@ -27,3 +27,6 @@ if __name__ == "__main__":
     options, args, parser = options_arguments_and_parser()
     options = options.__dict__
     try: main(name, *args, **options)
+    except Exception, e:
+        parser.error("OH SHTI: {0}".format(str(e)))
+        fail(1, "main() failed", e)
