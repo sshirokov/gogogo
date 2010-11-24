@@ -3,6 +3,12 @@ import sys
 from gogogo import BoardState
 from gogogo.game import Game
 
+def options_arguments_and_parser():
+    parser = OptionParser()
+    parser.add_option("-n", "--name", dest="name",
+                  help="NAME of a game", metavar="NAME")
+    (options, args) = parser.parse_args()
+    return options, args, parser
 
 def main(name, x=None, y=None, **options):
     game = Game(name)
