@@ -23,7 +23,6 @@ def main(name, x=None, y=None, **options):
         print "Next:", game.who()
 
 if __name__ == "__main__":
-    main(sys.argv[0], *sys.argv[1:])
     options, args, parser = options_arguments_and_parser()
     options = options.__dict__
     try: main(name, *args, **options)
