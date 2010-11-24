@@ -7,7 +7,6 @@ from gogogo.game import Game
 def main(name, x=None, y=None, **options):
     game = Game(name)
     print "Game:", game
-    print "-args:", args
     if 'skip' in args: game.skip()
     elif len(args) == 2: game.move(int(args[0]), int(args[1]))
     game.board.dump_board()
