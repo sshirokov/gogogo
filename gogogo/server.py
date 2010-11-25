@@ -27,10 +27,6 @@ routes = {
 def register_player(game):
     pass
 
-@app.post('/game/:name#[0-9a-f]+#/move/:player#[0-9a-f]+#/', name='game-move')
-def move(game, player):
-    pass
-
 @app.get('/game/:name#[0-9a-f]+#/branches/', name='game-branches')
 def branches(name):
     try:
@@ -41,23 +37,8 @@ def branches(name):
         bottle.response.status = 404
         return {'message': 'Game does not exist'}
 
-@app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-current')
-def current_branch(name):
-    try:
-        game = Game(name)
-        return {'message': '',
-                'data': game.branch()}
-    except GameError:
-        bottle.response.status = 404
-        return {'message': 'Game does not exist'}
-
-
 @app.post('/game/:name#[0-9a-f]+#/branches/create/', name='game-branches-create')
 def create_branch(game):
-    pass
-
-@app.post('/game/:name#[0-9a-f]+#/branches/switch/', name='game-branches-switch')
-def switch_branch(game):
     pass
 
 @app.get('/game/:name#[0-9a-f]+#/branch/:branch/', name='game-branch')
