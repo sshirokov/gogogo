@@ -35,6 +35,22 @@ def move(game, player):
 def branches(game):
     pass
 
+@app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-current')
+def current_branch(game):
+    pass
+
+@app.post('/game/:name#[0-9a-f]+#/branches/create/', name='game-branches-create')
+def create_branch(game):
+    pass
+
+@app.post('/game/:name#[0-9a-f]+#/branches/switch/', name='game-branches-switch')
+def switch_branch(game):
+    pass
+
+@app.get('/game/:name#[0-9a-f]+#/branch/:branch/', name='game-branch')
+def game(name, branch):
+    pass
+
 @app.get('/game/:name#[0-9a-f]+#/', name='game')
 def game(name):
     try:
