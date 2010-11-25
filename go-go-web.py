@@ -6,16 +6,14 @@ from optparse import OptionParser
 
 def options_arguments_and_parser():
     parser = OptionParser()
-    parser.add_option("-p", "--port", dest="port",
-                      type='int',
-                      default=9090,
-                      help="PORT to serve on", metavar="PORT")
 
     (options, args) = parser.parse_args()
     return options.__dict__, args, parser
 
 def main(*args, **options):
     print "main:", args, options
+    from gogogo import server
+    return server.run()
 
 def fail(code=None, msg=None, e=None):
     print "CATASTROFIC ERROR!"
@@ -28,7 +26,4 @@ def fail(code=None, msg=None, e=None):
 if __name__ == "__main__":
     options, args, parser = options_arguments_and_parser()
 
-    try: main(*args, **options)
-    except Exception, e:
-        parser.error("Error in main: {0}".format(str(e)))
-        fail(1, "main() failed", e)
+    main(*args, **options)
