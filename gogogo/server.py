@@ -57,7 +57,9 @@ def game(name):
         game = Game(name)
         return game.board.take_snapshot()
     except GameError:
-        return bottle.HTTPResponse('Game does does not exist', 404)
+        bottle.response.content_type = 'application/json'
+        bottle.response.status = 404
+        return {'message': 'Game does not exist'}
 
 @app.post('/game/create/', name='game-create')
 def new_game():
