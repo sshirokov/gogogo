@@ -14,8 +14,13 @@ def options_arguments_and_parser():
 def main(name, x=None, y=None, **options):
     game = Game(name)
     print "Game:", game
-    if 'skip' in args: game.skip()
-    elif len(args) == 2: game.move(int(args[0]), int(args[1]))
+    try:
+        if options.get('skip', False): game.skip()
+        elif (x is not None and y is not None): game.move(int(x), int(y))
+    except Exception, e:
+        print "== Your input is nonsensical: ", str(e)
+        print " = I'll allow it"
+
     game.board.dump_board()
     if game.board.game_over:
         print "Game over:", game.scores()
