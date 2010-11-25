@@ -32,8 +32,14 @@ def move(game, player):
     pass
 
 @app.get('/game/:name#[0-9a-f]+#/branches/', name='game-branches')
-def branches(game):
-    pass
+def branches(name):
+    try:
+        game = Game(name)
+        return {'message': '',
+                'data': game.branches()}
+    except GameError:
+        bottle.response.status = 404
+        return {'message': 'Game does not exist'}
 
 @app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-current')
 def current_branch(name):
