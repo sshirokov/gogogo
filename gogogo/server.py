@@ -1,6 +1,9 @@
 import bottle
 from bottle import Bottle
 
+from gogogo.game import Game, GameError
+
+
 app = Bottle(autojson=False)
 def dict2json(o):
     import json
@@ -15,17 +18,24 @@ routes = {
             },
     'game': {
                'GET': [{'/game/{game}/': 'Load game'}],
-               'POST': [{'/game/new/': 'Create a new game'}],
+               'POST': [{'/game/create/': 'Create a new game'}],
             },
 }
 
-@app.route('/game/:name#[0-9a-f]+#/')
+@app.get('/game/:name#[0-9a-f]+#/', name='game')
 def game(name):
-    from gogogo.game import Game
-    game = Game(name)
-    return game.board.take_snapshot()
+    try:
+        game = Game(name)
+        return game.board.take_snapshot()
+    except GameError:
+        return bottle.HTTPResponse('Game does does not exist', 404)
 
-@app.route('/')
+@app.post('/game/create/', name='game-create')
+def new_game():
+    game = Game(create=True)
+    bottle.redirect(app.get_url('game', name=game.name))
+
+@app.get('/', name='index')
 def index():
     return routes
 
