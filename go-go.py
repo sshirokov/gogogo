@@ -23,6 +23,14 @@ def main(name, x=None, y=None, **options):
     else:
         print "Next:", game.who()
 
+def fail(code=None, msg=None, e=None):
+    print "CATASTROFIC ERROR!"
+
+    if msg is not None: sys.stderr.write("Error: {0}\n".format(msg))
+    if e is not None: sys.stderr.write("Error: {0}\n".format(str(e)))
+
+    if code is not None: exit(code)
+
 if __name__ == "__main__":
     options, args, parser = options_arguments_and_parser()
     options = options.__dict__
