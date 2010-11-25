@@ -12,7 +12,7 @@ def options_arguments_and_parser():
     return options, args, parser
 
 def main(name, x=None, y=None, **options):
-    game = Game(name)
+    game = Game(name, create=True)
     print "Game:", game
     try:
         if options.get('skip', False): game.skip()
