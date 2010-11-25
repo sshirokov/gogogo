@@ -39,6 +39,10 @@ def fail(code=None, msg=None, e=None):
 if __name__ == "__main__":
     options, args, parser = options_arguments_and_parser()
     options = options.__dict__
+    print options, args
+    name = options.pop('name', None)
+
+
     try: main(name, *args, **options)
     except Exception, e:
         parser.error("OH SHTI: {0}".format(str(e)))
