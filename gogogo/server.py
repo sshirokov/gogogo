@@ -36,8 +36,15 @@ def branches(game):
     pass
 
 @app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-current')
-def current_branch(game):
-    pass
+def current_branch(name):
+    try:
+        game = Game(name)
+        return {'message': '',
+                'data': game.branch()}
+    except GameError:
+        bottle.response.status = 404
+        return {'message': 'Game does not exist'}
+
 
 @app.post('/game/:name#[0-9a-f]+#/branches/create/', name='game-branches-create')
 def create_branch(game):
@@ -55,9 +62,10 @@ def game(name, branch):
 def game(name):
     try:
         game = Game(name)
-        return game.board.take_snapshot()
+        return {'message': '',
+                'turn': game.board.player_turn(),
+                'data': game.board.take_snapshot()}
     except GameError:
-        bottle.response.content_type = 'application/json'
         bottle.response.status = 404
         return {'message': 'Game does not exist'}
 
