@@ -66,12 +66,6 @@ class Game(object):
                        for (name, sig) in self.repo.get_refs().items()
                        if name != "HEAD"])
 
-    def branch(self):
-        matching = [name
-                    for (name, sig) in self.repo.get_refs().items()
-                    if sig == self.repo.head()]
-        return matching and sorted(matching).pop().replace('refs/heads/', '')
-
     def save(self, message="Forced commit"):
         blob = Blob.from_string(self.board.as_json())
         tree = self._tree
