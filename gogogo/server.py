@@ -23,6 +23,18 @@ routes = {
             },
 }
 
+@app.post('/game/:name#[0-9a-f]+#/player/', name='game-register-player')
+def register_player(game):
+    pass
+
+@app.post('/game/:name#[0-9a-f]+#/move/:player#[0-9a-f]+#/', name='game-move')
+def move(game, player):
+    pass
+
+@app.get('/game/:name#[0-9a-f]+#/branches/', name='game-branches')
+def branches(game):
+    pass
+
 @app.get('/game/:name#[0-9a-f]+#/', name='game')
 def game(name):
     try:
