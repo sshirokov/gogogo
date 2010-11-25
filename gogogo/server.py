@@ -23,11 +23,11 @@ routes = {
             },
 }
 
-@app.post('/game/:name#[0-9a-f]+#/player/', name='game-register-player')
-def register_player(game):
+@app.post('/game/:name#[0-9a-f]+#/player/create/', name='game-player-create')
+def register_player(name):
     pass
 
-@app.get('/game/:name#[0-9a-f]+#/branches/', name='game-branches')
+@app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-index')
 def branches(name):
     try:
         game = Game(name)
@@ -37,7 +37,7 @@ def branches(name):
         bottle.response.status = 404
         return {'message': 'Game does not exist'}
 
-@app.post('/game/:name#[0-9a-f]+#/branches/create/', name='game-branches-create')
+@app.post('/game/:name#[0-9a-f]+#/branch/create/', name='game-branche-create')
 def create_branch(game):
     pass
 
@@ -45,7 +45,7 @@ def create_branch(game):
 def game(name, branch):
     pass
 
-@app.get('/game/:name#[0-9a-f]+#/', name='game')
+@app.get('/game/:name#[0-9a-f]+#/', name='game-index')
 def game(name):
     try:
         game = Game(name)
@@ -59,7 +59,7 @@ def game(name):
 @app.post('/game/create/', name='game-create')
 def new_game():
     game = Game(create=True)
-    bottle.redirect(app.get_url('game', name=game.name))
+    bottle.redirect(app.get_url('game-index', name=game.name))
 
 @app.get('/', name='index')
 def index():
