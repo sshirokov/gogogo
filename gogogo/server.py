@@ -1,7 +1,4 @@
-import json
-import web
-
-app = web.auto_application()
+import cherrypy
 
 routes = {
     'root': {
@@ -13,16 +10,12 @@ routes = {
             },
 }
 
-class root(app.page):
-    path = "/.*"
 
-    def GET(self, *args, **kwargs):
-        web.header('Content-Type', 'application/json')
-        return json.dumps({'args': args, 'kwargs': kwargs})
+class Index:
+    @cherrypy.expose
+    def index(self):
+        return routes
 
-#    def GET(self):
-#        web.header('Content-Type', 'application/json')
-#        return json.dumps(routes)
 
 def run(*args, **kwargs):
-    return app.run()
+    return cherrypy.quickstart(Index())
