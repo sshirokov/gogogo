@@ -61,6 +61,11 @@ class Game(object):
                    if t[1] == 'board.json'].pop()
                  ].data)
 
+    def branches(self):
+        return sorted([name.replace('refs/heads/', '')
+                       for (name, sig) in self.repo.get_refs().items()
+                       if name != "HEAD"])
+
     def branch(self):
         matching = [name
                     for (name, sig) in self.repo.get_refs().items()
