@@ -12,8 +12,11 @@ DEFAULTS = dict(
     white="White",
     x=19,
     y=19,
-    data=os.path.join('.', 'data', '{name}')
+    data=os.path.join('.', 'data', '{name}'),
+    create=False
 )
+
+class GameError(Exception): pass
 
 class Game(object):
     "A versioned game"
@@ -25,11 +28,13 @@ class Game(object):
 
         self.repo = None
         if not os.path.exists(self.options['data']):
+            if not self.options['create']: raise GameError("Game does not exist")
             os.makedirs(self.options['data'])
 
         try:
             self.repo = Repo(self.options['data'])
         except dulwich.errors.NotGitRepository:
+            if not self.options['create']: raise GameError("Game does not exist")
             self.repo = Repo.init_bare(self.options['data'])
             new = True
 
