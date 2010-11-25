@@ -25,7 +25,9 @@ routes = {
 
 @app.post('/game/:name#[0-9a-f]+#/player/create/', name='game-player-create')
 def register_player(name):
-    pass
+    try: data = json.loads(bottle.request.body.read())
+    except ValueError: raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
+    print "I got data:", data
 
 @app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-index')
 def branches(name):
