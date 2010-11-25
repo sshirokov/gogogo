@@ -1,7 +1,13 @@
 import bottle
 from bottle import Bottle
 
-app = Bottle()
+app = Bottle(autojson=False)
+def dict2json(o):
+    import json
+    from gogogo.util import GoJSONEncoder
+    bottle.response.content_type = 'application/json'
+    return json.dumps(o, cls=GoJSONEncoder)
+app.add_filter(dict, dict2json)
 
 routes = {
     'root': {
@@ -12,6 +18,12 @@ routes = {
                'POST': [{'/game/new/': 'Create a new game'}],
             },
 }
+
+@app.route('/game/:name#[0-9a-f]+#/')
+def game(name):
+    from gogogo.game import Game
+    game = Game(name)
+    return game.board.take_snapshot()
 
 @app.route('/')
 def index():
