@@ -1,4 +1,7 @@
-import cherrypy
+import bottle
+from bottle import Bottle
+
+app = Bottle()
 
 routes = {
     'root': {
@@ -10,12 +13,14 @@ routes = {
             },
 }
 
-
-class Index:
-    @cherrypy.expose
-    def index(self):
-        return routes
+@app.route('/')
+def index():
+    return routes
 
 
-def run(*args, **kwargs):
-    return cherrypy.quickstart(Index())
+def run(addr='localhost', port=9090, **kwargs):
+    bottle.debug(kwargs.pop('debug', False))
+    bottle.run(app=app, host=addr, port=port,
+               **dict({'reloader': kwargs.pop('reload', False), 
+                       'interval': kwargs.pop('reload_interval', 1)},
+                      **kwargs))
