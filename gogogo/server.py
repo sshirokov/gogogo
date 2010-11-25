@@ -14,11 +14,15 @@ routes = {
 }
 
 class root(app.page):
-    path = "/"
+    path = "/.*"
 
-    def GET(self):
+    def GET(self, *args, **kwargs):
         web.header('Content-Type', 'application/json')
-        return json.dumps(routes)
+        return json.dumps({'args': args, 'kwargs': kwargs})
+
+#    def GET(self):
+#        web.header('Content-Type', 'application/json')
+#        return json.dumps(routes)
 
 def run(*args, **kwargs):
     return app.run()
