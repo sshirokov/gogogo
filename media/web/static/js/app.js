@@ -8,6 +8,29 @@ window.gogogo = {
                         dataType: 'json'
                     });
         $(window).resize(window.gogogo.size_screen);
+        $(window).bind('hashchange', gogogo.hash_change);
+    },
+
+    hash_change: function(e) {
+        var that = $(this);
+        var frag_url = '/' + e.fragment;
+        $('form[method=GET]').each(function(i, v) {
+                                       var node = $(v),
+                                           action = node.attr('action');
+                                       var search = action.replace(/{.+?}/g, '(.+?)'),
+                                           template = action.replace(/{.+?}/g, '{replace}');
+                                       var found = frag_url.match(search);
+                                       if(found) {
+                                           $(found.slice(1)).each(function(i, v) {
+                                                                      console.log("Replacement:", v);
+                                                                      template = template.replace('{replace}', v);
+                                           });
+                                           console.log(i, "=>", node, "=>", action, "=>", search, found);
+                                           console.log("Generated:", template);
+                                           window.gogogo.load_board(template);
+                                           window.gogogo.show_screens();
+                                       }
+        });
     },
 
     show_screens: function() {

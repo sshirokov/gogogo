@@ -9,7 +9,7 @@
   </head>
   <body>
     <div id="container">
-      <h1 id="title">GoGoGo</h1>
+      <a href="/"><h1 id="title">GoGoGo</h1></a>
 
       <div class="screen default" id="game-form">
         <script src="/static/js/game.js" type="application/javascript"></script>
@@ -21,6 +21,13 @@
           <input id="game-id" name="game-id" type="text" value="" />
           <input type="submit" value="Go!">
         </form>
+      </div>
+
+      <div class="screen" id="game">
+        <script src="/static/js/board.js" type="application/javascript"></script>
+        <div id="board">
+          HurdurBoard
+        </div>
       </div>
     </div>
   </body>
