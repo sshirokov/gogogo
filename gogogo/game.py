@@ -21,7 +21,6 @@ class GameError(Exception): pass
 class Game(object):
     "A versioned game"
     def __init__(self, name=None, **options):
-        self.branch = 'master'
         self.name = name or uuid.uuid4().hex
         self.options = dict(DEFAULTS, **options)
         self.options['data'] = self.options['data'].format(name=self.name)
@@ -40,31 +39,43 @@ class Game(object):
             new = True
 
 
-        self.board = (new and BoardState()) or self.reload_board()
+        self.board = (new and BoardState()) or self.get_board()
 
         if new: self.save("New blank board for game: %s" % self.name)
 
     @property
-    def _tree(self):
+    def branch(self):
+        head = self.repo.refs.read_ref('HEAD')
+        if head and head.startswith('ref: '):
+            head = head.split(': ')[-1]
+            head = head.replace('refs/heads/', '')
+            return head
+        return 'master'
+
+    def _tree(self, branch=None):
+        branch = branch or self.branch
         try: return self.repo[
-                      self.repo['refs/heads/%s' % self.branch].tree
+                      self.repo['refs/heads/%s' % branch].tree
                     ]
         except KeyError: return Tree()
 
 
-    def reload_board(self):
+    def get_board(self, branch=None):
+        branch = branch or 'master'
+        if branch not in self.branches(): raise GameError("Unknown branch")
         return BoardState.from_json(
             self.repo[
                   [t[2] 
-                   for t in self._tree.entries() # [(mode, name, sha)...]
+                   for t in self._tree(branch).entries() # [(mode, name, sha)...]
                    if t[1] == 'board.json'].pop()
                  ].data)
 
-    def branch(self, new=None):
-        if new and 'refs/heads/%s' % new in self.repo.get_refs().keys():
+    def set_branch(self, new):
+        if 'refs/heads/%s' % new in self.repo.get_refs().keys():
             self.branch = new
             self.repo.set_symbolic_ref('refs/heads/%s' % self.branch)
-        return self.branch
+            return self.branch
+        return False
 
     def branches(self):
         return sorted([name.replace('refs/heads/', '')
@@ -85,7 +96,7 @@ class Game(object):
 
     def save(self, message="Forced commit"):
         blob = Blob.from_string(self.board.as_json())
-        tree = self._tree
+        tree = self._tree()
         tree.add(0100644, 'board.json', blob.id)
 
         [self.repo.object_store.add_object(it)
