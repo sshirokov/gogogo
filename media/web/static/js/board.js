@@ -1,7 +1,8 @@
 (function($) {
      var info = window._info = {
          game: false,
-         player: false
+         player: false,
+         interval: false
      };
      var gfx = window._gfx = {
          paper: undefined,
@@ -19,6 +20,25 @@
          }
      };
 
+     function ping_player() {
+         var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
+
+         info.interval = setInterval(function() {
+                                         $.ajax({url : url,
+                                                 type: 'POST',
+
+                                                 success: function() { },
+                                                 error: function(xhr, text_status, erroThrown) {
+                                                     if(xhr.code == 404) {
+                                                         clearInterval(info.interval);
+                                                         info.interval = false;
+                                                     }
+                                                 }
+                                               });
+                                     },
+                                     10000);
+     }
+
      function boot() {
          //Register events relevant to a board
          function register_form(e) {
@@ -35,6 +55,8 @@
                          console.log("Registered:", data, text_status, xhr);
                          info.player = data.player;
                          //TODO: Start the ping thread
+
+                         ping_player();
                      },
                      error: function(xhr, text_status, errorThrown) {
                          console.log("Failed:", xhr, text_status, errorThrown);
