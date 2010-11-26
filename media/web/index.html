@@ -11,10 +11,10 @@
       <h1 id="title">GoGoGo</h1>
 
       <div class="screen default" id="game-form">
-        <form id="new-game">
+        <form method="POST" action="/game/create/" id="new-game">
           <input type="submit" value="I want to Go!">
         </form>
-        <form id="go-to-game">
+        <form method="GET" action="/game/{game}/" id="go-to-game">
           <label for="game-id">Game:</label>
           <input id="game-id" name="game-id" type="text" value="" />
           <input type="submit" value="Go!">
