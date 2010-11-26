@@ -20,12 +20,15 @@ Version controlled Go game/client/library
 *** Remove the repo to remove state
 ** Controls
    The default driver will tell you when your game is over and the score
+
+*** To run the web server
+   ./go-go-web.py #To launch the web server
 *** Show state
     $ go-go.py
 *** Move
     $ go-go.py x y #(0,0) -> (18, 18) ; (x, y) with (0,0) at bottom right (18, 18) top right
 *** Skip
-    $ go-go.py skip
+    $ go-go.py --skip
 
 * TODO-list
 ** DONE Maintain multiple branches
