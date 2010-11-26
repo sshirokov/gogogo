@@ -86,13 +86,16 @@
                                                 col * gfx.step
                                             ),
                                             gfx.corner_offset + (
-                                                ((board.height - 1) - row) * gfx.step
+                                                ((gfx.rows - 1) - row) * gfx.step
                                             ),
                                             gfx.stone).attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
                  pos.hover(function (event) {
                                this.attr({'fill-opacity': 0.25});
                            }, function (event) {
                                this.attr({'fill-opacity': 0});
+                           });
+                 pos.click(function(event) {
+                               console.log("Clicked:", this);
                            });
 
                  gfx.elements.positions.push(pos);
