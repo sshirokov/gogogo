@@ -9,7 +9,10 @@ window.gogogo = {
                     });
         $(window).resize(window.gogogo.size_screen);
         $(window).bind('hashchange', gogogo.hash_change);
-        $(window).trigger('hashchange');
+        if(window.location.hash)
+            $(window).trigger('hashchange');
+        else
+            window.location.hash = 'index';
     },
 
     hash_change: function(e) {
@@ -29,9 +32,9 @@ window.gogogo = {
                                            console.log(i, "=>", node, "=>", action, "=>", search, found);
                                            console.log("Generated:", template);
                                            window.gogogo.load_board(template);
-                                           window.gogogo.show_screens();
                                        }
         });
+        window.gogogo.show_screens();
     },
 
     show_screens: function() {
