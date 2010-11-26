@@ -8,6 +8,9 @@ def options_arguments_and_parser():
     parser = OptionParser()
     parser.add_option("-n", "--name", dest="name",
                   help="NAME of a game", metavar="NAME")
+    parser.add_option('-s', "--skip", dest="skip", action="store_true",
+                      default=False,
+                      help="Skip the game")
     (options, args) = parser.parse_args()
     return options, args, parser
 
