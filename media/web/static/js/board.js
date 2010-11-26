@@ -22,11 +22,27 @@
      function boot() {
          //Register events relevant to a board
          function register_form(e) {
-             var data = {};
+             var data = {},
+                 url = $(this).attr('action').replace('{game}', info.game);
              $($(this).serializeArray()).each(function(i, v) {
                                                   data[v.name] = v.value;
                                               });
-             console.log("Registering:", info.game, data);
+             $.ajax({url: url,
+                     type: $(this).attr('method'),
+                     data: JSON.stringify(data),
+
+                     success: function(data, text_status, xhr) {
+                         console.log("Registered:", data, text_status, xhr);
+                         info.player = data.player;
+                         //TODO: Start the ping thread
+                     },
+                     error: function(xhr, text_status, errorThrown) {
+                         console.log("Failed:", xhr, text_status, errorThrown);
+                         if(xhr.status == 409) {
+                             console.log("Already have a player registration");
+                         }
+                     }
+             });
              return false;
          }
          $('#register-form').submit(register_form);
