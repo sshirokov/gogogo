@@ -1,4 +1,8 @@
 (function($) {
+     var info = window._info = {
+         game: false,
+         player: false
+     };
      var gfx = window._gfx = {
          paper: undefined,
          container: '#game',
@@ -22,7 +26,7 @@
              $($(this).serializeArray()).each(function(i, v) {
                                                   data[v.name] = v.value;
                                               });
-             console.log("Registering:", data);
+             console.log("Registering:", info.game, data);
              return false;
          }
          $('#register-form').submit(register_form);
@@ -35,6 +39,7 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
+                     info.game = data.name;
                      if(data.over) {
                          $(".messages #player").html("Game Over");
                      }
