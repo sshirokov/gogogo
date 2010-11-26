@@ -1,5 +1,16 @@
+window.gogogo = {
+    query: undefined,
+    boot: function($) {
+        $.ajaxSetup({
+                        contentType: 'application/json',
+                        dataType: 'json'
+                    });
+        window.gogogo.query = $;
+    }
+};
+
 (function($) {
      $(function() {
-           $('#message').html("Hello");
+           window.gogogo.boot($);
      });
 })(jQuery);
