@@ -65,7 +65,7 @@ def branches(game):
     return {'message': '',
             'data': game.branches()}
 
-@app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branche-create')
+@app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branch-create')
 @with_game
 def create_branch(game):
     pass
