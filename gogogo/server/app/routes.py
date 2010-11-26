@@ -1,6 +1,7 @@
 import json, uuid
 
 import bottle
+import mimeparse
 
 from gogogo.game import Game, GameError
 from gogogo.server.app import app
@@ -120,4 +121,7 @@ def new_game():
 
 @app.get('/', name='index')
 def index():
-    return {'message': ''}
+    use = mimeparse.best_match(['application/json', 'text/html'], bottle.request.header.get('accept'))
+    return {'message': '',
+            'accept': bottle.request.header.get('accept'),
+            'use': use}
