@@ -35,13 +35,40 @@ def register_player(game):
             'player': player.uid,
             'game': game.name}
 
-@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-create')
+@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-ping')
 @with_game
 @with_player
 def ping_player(game, player):
     return {'message': '',
             'player': player.uid,
             'ok': True}
+
+@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/skip/', name='game-player-skip')
+@with_game
+@with_player
+def player_skip(game, player):
+    if game.who() != player.info['player']:
+        raise bottle.HTTPResponse({'message': 'Not your turn', 'status': False}, 409)
+    return {'message': '',
+            'status': game.skip(),
+            'data': game.board.take_snapshot()}
+
+@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')
+@with_game
+@with_player
+def player_move(game, player):
+    if game.who() != player.info['player']:
+        raise bottle.HTTPResponse({'message': 'Not your turn', 'status': False}, 409)
+    try:
+        data = json.loads(bottle.request.bottle.read())
+        x = data['x']
+        y = data['y']
+    except (ValueError, KeyError):
+        raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
+    return {'message': '',
+            'status': game.move(x, y) and True or False,
+            'data': game.board.take_snapshot()}
+
 
 @app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
 @with_game
@@ -69,7 +96,7 @@ def game(game):
 @app.post('/game/create/', name='game-create')
 def new_game():
     game = Game(create=True)
-    bottle.redirect(app.get_url('game-index', name=game.name))
+    bottle.redirect(app.get_url('game-index', game=game.name))
 
 @app.get('/', name='index')
 def index():
