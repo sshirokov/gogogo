@@ -54,9 +54,13 @@ window.gogogo = {
         var screen = $('.screen.visible:first');
         var x = $(window).width(),
             y = $(window).height(),
-            cx = Math.round(x * 0.5),
-            cy = Math.round(y * 0.5);
-        screen.width(cx).height(cy).offset({top: cy / 2, left: cx / 2});
+            cx = Math.round(x * 0.8),
+            cy = Math.round(y * 0.8);
+        if(cx < 500) cx = 500;
+        if(cy < 500) cy = 500;
+        var ox = (x - cx) / 2.0,
+            oy = (y - cy) / 2.0;
+        screen.width(cx).height(cy).offset({top: oy, left: ox});
     }
 };
 
