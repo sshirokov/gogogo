@@ -17,5 +17,9 @@
                  }
          });
      }
+     //Create paper
+     window.gogogo.paper = Raphael($('#game').get(0), 500, 500);
+     var c = window.gogogo.paper.circle(250, 250, 50);
+     c.attr('fill', "#ff0000");
      window.gogogo.load_board = load_board;
 })(jQuery);
