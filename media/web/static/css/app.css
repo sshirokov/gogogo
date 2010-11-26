@@ -9,4 +9,6 @@ div#container {
 
 .screen.visible {
     display: block;
+    position: relative;
+    background: green;
 }
