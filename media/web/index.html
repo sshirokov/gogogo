@@ -2,11 +2,24 @@
 <html>
   <head>
     <title>GoGoGo!</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/app.css" />
     <script src="/static/js/lib/jquery-1.4.4.js" type="application/javascript"></script>
     <script src="/static/js/app.js" type="application/javascript"></script>
   </head>
   <body>
-    <span id="message">&nbsp;</span>
-    <h1>Hello World</h1>
+    <div id="container">
+      <h1 id="title">GoGoGo</h1>
+
+      <div class="screen default" id="game-form">
+        <form id="new-game">
+          <input type="submit" value="I want to Go!">
+        </form>
+        <form id="go-to-game">
+          <label for="game-id">Game:</label>
+          <input id="game-id" name="game-id" type="text" value="" />
+          <input type="submit" value="Go!">
+        </form>
+      </div>
+    </div>
   </body>
 </html>

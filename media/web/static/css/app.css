@@ -1,0 +1,12 @@
+div#container {
+    width: 100%;
+    text-align: center;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.visible {
+    display: default;
+}
