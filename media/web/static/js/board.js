@@ -94,11 +94,14 @@
                            }, function (event) {
                                this.attr({'fill-opacity': 0});
                            });
-                 pos.click(function(event) {
-                               console.log("Clicked:", this);
-                           });
+                 var make_click = function(x, y) {
+                     return function(even) {
+                         console.log("Clicked:", this, x, y);
+                     };
+                 };
+                 pos.click(make_click(col, row));
 
-                 gfx.elements.positions.push(pos);
+               gfx.elements.positions.push(pos);
              }
          }
 
