@@ -40,7 +40,6 @@
          gfx.elements.base.attr('fill', "#D1D190");
          gfx.elements.lines = [];
 
-         console.log("Drawing cols");
          for(var col = 0; col < gfx.cols; col++) {
              var ex, ey,
                  sx = 30,
@@ -54,7 +53,6 @@
              gfx.elements.lines.push(gfx.paper.path(path));
          }
 
-         console.log("Drawing rows");
          for(var row = 0; row < gfx.rows; row++) {
              var ex, ey,
                  sx = 30,
@@ -65,7 +63,6 @@
              sy += (step * row);
              ey = sy;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
-             console.log("Path:", path);
              gfx.elements.lines.push(gfx.paper.path(path));
          }
 
