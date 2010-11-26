@@ -66,6 +66,20 @@ def branches(game):
             'current': game.branch,
             'branches': game.branches()}
 
+@app.post('/game/:game#[0-9a-f]+#/branch/change/', name='game-branch-switch')
+@with_game
+def change_branch(game):
+    try:
+        data = json.loads(bottle.request.body.read())
+        name = data['name']
+        return {'message': '',
+                'status': game.set_branch(name)}
+    except (ValueError, KeyError):
+        raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
+    except GameError:
+        raise bottle.HTTPResponse({'message': "Could not change branch"}, 404)
+
+
 @app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branch-create')
 @with_game
 def create_branch(game):
