@@ -3,7 +3,7 @@ class ParamFilter(object):
         self.filters = kwargs
 
     def __wrapped__(self, *args, **kwargs):
-        [kwargs.update({key: self.filters.get(key)(val)})
+        [kwargs.update({key: self.filters.get(key)(val, kwargs)})
          for (key, val) in kwargs.items()
          if self.filters.has_key(key)]
         return self.fn(*args, **kwargs)

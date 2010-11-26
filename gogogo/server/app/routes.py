@@ -4,7 +4,7 @@ import bottle
 
 from gogogo.game import Game, GameError
 from gogogo.server.app import app
-from gogogo.server.filters import with_game
+from gogogo.server.filters import with_game, with_player
 from gogogo.server.app.players import Player
 
 routes = {
@@ -34,6 +34,14 @@ def register_player(game):
     return {'message': '',
             'player': player.uid,
             'game': game.name}
+
+@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-create')
+@with_game
+@with_player
+def ping_player(game, player):
+    return {'message': '',
+            'player': player.uid,
+            'ok': True}
 
 @app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
 @with_game
