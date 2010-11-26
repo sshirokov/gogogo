@@ -20,6 +20,7 @@
                  type: 'GET',
 
                  success: function(data, text_status, xhr) {
+                     window.gogogo.draw_board();
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      if(data.over) {
                          $(".messages #player").html("Game Over");
@@ -29,6 +30,18 @@
                      }
                      $(data.data.moves).each(function(i, v) {
                                                  console.log("Move:", v.player, v.passing, "(" + v.x + ",", v.y + ")");
+                                                 if(!v.passing) {
+                                                     gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
+                                                     gfx.elements.stones[v.player].push(
+                                                         gfx.paper.circle(gfx.corner_offset + (
+                                                                              v.x * gfx.step
+                                                                          ),
+                                                                          gfx.corner_offset + (
+                                                                              ((data.data.height - 1) - v.y) * gfx.step
+                                                                          ),
+                                                                          10)
+                                                     );
+                                                 }
                      });
 
                      return false;
@@ -50,6 +63,7 @@
          gfx.elements.base = gfx.paper.rect(10, 10, 480, 480, 5);
          gfx.elements.base.attr('fill', "#D1D190");
          gfx.elements.lines = [];
+         gfx.elements.stones = {};
          gfx.step = (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1);
 
          for(var col = 0; col < gfx.cols; col++) {
