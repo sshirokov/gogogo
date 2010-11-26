@@ -60,7 +60,7 @@ def player_move(game, player):
     if game.who() != player.info['player']:
         raise bottle.HTTPResponse({'message': 'Not your turn', 'status': False}, 409)
     try:
-        data = json.loads(bottle.request.bottle.read())
+        data = json.loads(bottle.request.body.read())
         x = data['x']
         y = data['y']
     except (ValueError, KeyError):
@@ -90,7 +90,8 @@ def game(game, branch):
 @with_game
 def game(game):
     return {'message': '',
-            'turn': game.board.player_turn(),
+            'turn': game.who(),
+            'over': game.board.game_over,
             'data': game.board.take_snapshot()}
 
 @app.post('/game/create/', name='game-create')
