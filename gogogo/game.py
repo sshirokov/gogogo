@@ -71,8 +71,17 @@ class Game(object):
                        for (name, sig) in self.repo.get_refs().items()
                        if name != "HEAD"])
 
-    def make_branch(self, back=0):
-        self.repo.revision_history
+    def make_branch(self, name, back=0):
+        if ('refs/heads/%s' % name) in self.repo.get_refs().keys():
+            raise GameError("I already have this branch")
+        try:
+            head = self.repo.head()
+            history = self.repo.revision_history(head)
+            self.repo.refs['refs/heads/%s' % name] = history[back].id
+        except IndexError:
+            raise GameError("Trying to go {back} which is further than history".format(back=back))
+        return True
+
 
     def save(self, message="Forced commit"):
         blob = Blob.from_string(self.board.as_json())

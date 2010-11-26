@@ -71,10 +71,13 @@ def create_branch(game):
     try:
         data = json.loads(bottle.request.body.read())
         name = data.get('name', uuid.uuid4().hex)
-        offset = data['offset'] #Steps back from now to take
+        back = data['back']
+        return {'message': '',
+                'status': game.make_branch(name, back)}
     except (ValueError, KeyError):
         raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
-    return {'message': "Trying to create branch: %s" % data}
+    except GameError:
+        raise bottle.HTTPResponse({'message': "Could not create branch"}, 409)
 
 @app.get('/game/:game#[0-9a-f]+#/branch/:branch/', name='game-branch')
 @with_game
