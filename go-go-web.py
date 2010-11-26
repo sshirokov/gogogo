@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys
+import sys, os
 from gogogo import BoardState
 from gogogo.game import Game
 from optparse import OptionParser
@@ -18,6 +18,10 @@ def options_arguments_and_parser():
     parser.add_option('-r', '--reload', dest="reload", default=False,
                       action="store_true",
                       help="Enable autoreloader")
+    parser.add_option('-m', '--media', dest="media",
+                      default=os.path.join(os.getcwd(), "media", "web"),
+                      action="store", type="string",
+                      help="The root of the media [default: %default]")
     (options, args) = parser.parse_args()
     return options.__dict__, args, parser
 

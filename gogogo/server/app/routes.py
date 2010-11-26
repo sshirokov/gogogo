@@ -122,6 +122,14 @@ def new_game():
 @app.get('/', name='index')
 def index():
     use = mimeparse.best_match(['application/json', 'text/html'], bottle.request.header.get('accept'))
-    return {'message': '',
-            'accept': bottle.request.header.get('accept'),
-            'use': use}
+    if use == 'application/json':
+        return {'message': '',
+                'accept': bottle.request.header.get('accept'),
+                'use': use}
+    else:
+        return bottle.static_file('index.html', root=app.config['media_root'])
+
+@app.get('/static/:path#.+#', name='static')
+def static(path):
+    import os
+    return bottle.static_file(path, root=os.path.join(app.config['media_root'], 'static'))
