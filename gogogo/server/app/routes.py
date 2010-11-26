@@ -117,7 +117,9 @@ def game(game):
 @app.post('/game/create/', name='game-create')
 def new_game():
     game = Game(create=True)
-    bottle.redirect(app.get_url('game-index', game=game.name))
+    url = app.get_url('game-index', game=game.name)
+    bottle.response.headers['location'] = url
+    return bottle.HTTPResponse({'message': '', 'game': game.name}, 201)
 
 @app.get('/', name='index')
 def index():

@@ -3,6 +3,7 @@ window.gogogo = {
     boot: function($) {
         window.gogogo.query = $;
         $.ajaxSetup({
+                        async: true,
                         contentType: 'application/json',
                         dataType: 'json'
                     });

@@ -1,6 +1,21 @@
 (function($) {
      function new_game() {
          console.log("Getting new game");
+         $.ajax({url: $(this).attr('action'),
+                 type: $(this).attr('method'),
+
+                 success: function(data, text_status, xhr) {
+                     console.log("We win:", data, text_status, xhr, xhr.getResponseHeader('location'));
+
+                     return false;
+                 },
+
+                 error: function(xhr, text_status, errorThrown) {
+                     console.log("We lose:", xhr, text_status, errorThrown);
+
+                     return false;
+                 }
+         });
 
          return false;
      }
