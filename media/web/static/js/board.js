@@ -6,6 +6,8 @@
          height: 500,
          rows: 19,
          cols: 19,
+         step: false,
+         corner_offset: 30,
 
          elements: {
 
@@ -19,7 +21,15 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
-                     $(".messages #player").html(data.turn);
+                     if(data.over) {
+                         $(".messages #player").html("Game Over");
+                     }
+                     else {
+                         $(".messages #player").html(data.turn);
+                     }
+                     $(data.data.moves).each(function(i, v) {
+                                                 console.log("Move:", v.player, v.passing, "(" + v.x + ",", v.y + ")");
+                     });
 
                      return false;
                  },
@@ -40,15 +50,15 @@
          gfx.elements.base = gfx.paper.rect(10, 10, 480, 480, 5);
          gfx.elements.base.attr('fill', "#D1D190");
          gfx.elements.lines = [];
+         gfx.step = (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1);
 
          for(var col = 0; col < gfx.cols; col++) {
              var ex, ey,
-                 sx = 30,
-                 sy = 30,
+                 sx = gfx.corner_offset,
+                 sy = gfx.corner_offset,
                  distance = gfx.width - (sx * 2),
-                 step = distance / (gfx.cols - 1);
              ey = distance + sx;
-             sx += (step * col);
+             sx += (gfx.step * col);
              ex = sx;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
              gfx.elements.lines.push(gfx.paper.path(path));
@@ -56,12 +66,12 @@
 
          for(var row = 0; row < gfx.rows; row++) {
              var ex, ey,
-                 sx = 30,
-                 sy = 30,
+                 sx = gfx.corner_offset,
+                 sy = gfx.corner_offset,
                  distance = gfx.width - (sy * 2),
                  step = distance / (gfx.rows - 1);
              ex = distance + sx;
-             sy += (step * row);
+             sy += (gfx.step * row);
              ey = sy;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
              gfx.elements.lines.push(gfx.paper.path(path));
