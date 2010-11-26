@@ -71,7 +71,7 @@ def create_branch(game):
     try:
         data = json.loads(bottle.request.body.read())
         name = data.get('name', uuid.uuid4().hex)
-        back = data['back']
+        back = data.get('back', 0)
         return {'message': '',
                 'status': game.make_branch(name, back)}
     except (ValueError, KeyError):
