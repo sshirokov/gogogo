@@ -15,6 +15,19 @@
          }
      };
 
+     function boot() {
+         //Register events relevant to a board
+         function register_form(e) {
+             var data = {};
+             $($(this).serializeArray()).each(function(i, v) {
+                                                  data[v.name] = v.value;
+                                              });
+             console.log("Registering:", data);
+             return false;
+         }
+         $('#register-form').submit(register_form);
+     }
+
      function load_board(url) {
          console.log("Loading board from:", url);
          $.ajax({url: url,
@@ -144,6 +157,9 @@
      window.gogogo.draw_board = draw_board;
 
      //Boot
-     init_board();
-     draw_board();
+     $(function() {
+           boot();
+           init_board();
+           draw_board();
+     });
 })(jQuery);

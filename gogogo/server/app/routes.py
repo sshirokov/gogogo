@@ -102,6 +102,7 @@ def game_branch(game, branch):
     except GameError: raise bottle.HTTPResponse({'message': "Cannot load branch"}, 404)
 
     return {'message': '',
+            'name': game.name,
             'turn': board.player_turn(),
             'over': board.game_over,
             'data': board.take_snapshot()}
@@ -110,6 +111,7 @@ def game_branch(game, branch):
 @with_game
 def game(game):
     return {'message': '',
+            'name': game.name,
             'turn': game.who(),
             'over': game.board.game_over,
             'data': game.board.take_snapshot()}
