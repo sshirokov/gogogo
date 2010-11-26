@@ -8,6 +8,7 @@
          cols: 19,
          step: false,
          corner_offset: 30,
+         stone: 10,
 
          elements: {
 
@@ -50,6 +51,7 @@
          gfx.elements.base.attr('fill', "#D1D190");
          gfx.elements.lines = [];
          gfx.elements.stones = {};
+         gfx.elements.positions = [];
          gfx.step = (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1);
 
          for(var col = 0; col < gfx.cols; col++) {
@@ -77,6 +79,26 @@
              gfx.elements.lines.push(gfx.paper.path(path));
          }
 
+         for(var row = 0; row < gfx.rows; row++) {
+             for(var col = 0; col < gfx.cols; col++) {
+                 console.log("Marking position:", row, col);
+                 var pos = gfx.paper.circle(gfx.corner_offset + (
+                                                col * gfx.step
+                                            ),
+                                            gfx.corner_offset + (
+                                                ((board.height - 1) - row) * gfx.step
+                                            ),
+                                            gfx.stone).attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
+                 pos.hover(function (event) {
+                               this.attr({'fill-opacity': 0.25});
+                           }, function (event) {
+                               this.attr({'fill-opacity': 0});
+                           });
+
+                 gfx.elements.positions.push(pos);
+             }
+         }
+
          //Render board if we have one
          if(board) {
              function player_to_color(player) {
@@ -94,7 +116,8 @@
                                                               gfx.corner_offset + (
                                                                   ((board.height - 1) - v.y) * gfx.step
                                                               ),
-                                                              10).attr({fill: player_to_color(v.player)})
+                                                              gfx.stone).
+                                                       attr({fill: player_to_color(v.player)})
                                          );
                                      }
                                  });
