@@ -1,4 +1,4 @@
-import json
+import json, uuid
 
 import bottle
 
@@ -68,7 +68,13 @@ def branches(game):
 @app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branch-create')
 @with_game
 def create_branch(game):
-    pass
+    try:
+        data = json.loads(bottle.request.body.read())
+        name = data.get('name', uuid.uuid4().hex)
+        offset = data['offset'] #Steps back from now to take
+    except (ValueError, KeyError):
+        raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
+    return {'message': "Trying to create branch: %s" % data}
 
 @app.get('/game/:game#[0-9a-f]+#/branch/:branch/', name='game-branch')
 @with_game
