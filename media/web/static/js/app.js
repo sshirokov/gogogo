@@ -1,1 +1,5 @@
-alert("Loaded");
+(function($) {
+     $(function() {
+           $('#message').html("Hello");
+     });
+})(jQuery);
