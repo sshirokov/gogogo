@@ -4,8 +4,7 @@ import bottle
 from bottle import Bottle
 
 from gogogo.game import Game, GameError
-from gogogo.server.app import app
-from gogogo.server.app import routes
+from gogogo.server.app import app, routes
 
 def run(addr='localhost', port=9090, **kwargs):
     bottle.debug(kwargs.pop('debug', False))
