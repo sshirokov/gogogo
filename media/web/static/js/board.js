@@ -20,7 +20,6 @@
                  type: 'GET',
 
                  success: function(data, text_status, xhr) {
-                     window.gogogo.draw_board();
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      if(data.over) {
                          $(".messages #player").html("Game Over");
@@ -28,21 +27,8 @@
                      else {
                          $(".messages #player").html(data.turn);
                      }
-                     $(data.data.moves).each(function(i, v) {
-                                                 console.log("Move:", v.player, v.passing, "(" + v.x + ",", v.y + ")");
-                                                 if(!v.passing) {
-                                                     gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
-                                                     gfx.elements.stones[v.player].push(
-                                                         gfx.paper.circle(gfx.corner_offset + (
-                                                                              v.x * gfx.step
-                                                                          ),
-                                                                          gfx.corner_offset + (
-                                                                              ((data.data.height - 1) - v.y) * gfx.step
-                                                                          ),
-                                                                          10)
-                                                     );
-                                                 }
-                     });
+
+                     window.gogogo.draw_board(data.data);
 
                      return false;
                  },
@@ -89,6 +75,30 @@
              ey = sy;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
              gfx.elements.lines.push(gfx.paper.path(path));
+         }
+
+         //Render board if we have one
+         if(board) {
+             function player_to_color(player) {
+                 return {'Black': '#000', 'White': '#fff'}[player];
+             }
+
+             $(board.moves).each(function(i, v) {
+                                     console.log("Move:", v.player, v.passing, "(" + v.x + ",", v.y + ")");
+                                     if(!v.passing) {
+                                         gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
+                                         gfx.elements.stones[v.player].push(
+                                             gfx.paper.circle(gfx.corner_offset + (
+                                                                  v.x * gfx.step
+                                                              ),
+                                                              gfx.corner_offset + (
+                                                                  ((board.height - 1) - v.y) * gfx.step
+                                                              ),
+                                                              10).attr({fill: player_to_color(v.player)})
+                                         );
+                                     }
+                                 });
+
          }
 
      }
