@@ -63,7 +63,8 @@ def player_move(game, player):
 @with_game
 def branches(game):
     return {'message': '',
-            'data': game.branches()}
+            'current': game.branch,
+            'branches': game.branches()}
 
 @app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branch-create')
 @with_game
@@ -79,10 +80,16 @@ def create_branch(game):
     except GameError:
         raise bottle.HTTPResponse({'message': "Could not create branch"}, 409)
 
-@app.get('/game/:game#[0-9a-f]+#/branch/:branch/', name='game-branch')
+@app.get('/game/:game#[0-9a-f]+#/branch/:branch#[\w_-]+#/', name='game-branch')
 @with_game
-def game(game, branch):
-    pass
+def game_branch(game, branch):
+    try: board = game.get_board(branch)
+    except GameError: raise bottle.HTTPResponse({'message': "Cannot load branch"}, 404)
+
+    return {'message': '',
+            'turn': board.player_turn(),
+            'over': board.game_over,
+            'data': board.take_snapshot()}
 
 @app.get('/game/:game#[0-9a-f]+#/', name='game-index')
 @with_game
