@@ -79,9 +79,9 @@
              gfx.elements.lines.push(gfx.paper.path(path));
          }
 
+         //Mark the positions on the board
          for(var row = 0; row < gfx.rows; row++) {
              for(var col = 0; col < gfx.cols; col++) {
-                 console.log("Marking position:", row, col);
                  var pos = gfx.paper.circle(gfx.corner_offset + (
                                                 col * gfx.step
                                             ),
