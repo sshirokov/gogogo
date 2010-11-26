@@ -3,3 +3,5 @@
 data/*
 *.egg-info
 ve/*
+/run/gogogo.pid
+/logs/access.log
