@@ -72,8 +72,7 @@ class Game(object):
 
     def set_branch(self, new):
         if 'refs/heads/%s' % new in self.repo.get_refs().keys():
-            self.branch = new
-            self.repo.set_symbolic_ref('refs/heads/%s' % self.branch)
+            self.repo.refs.set_symbolic_ref('HEAD', 'refs/heads/%s' % new)
             return self.branch
         return False
 
