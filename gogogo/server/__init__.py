@@ -55,7 +55,8 @@ def new_game():
 
 @app.get('/', name='index')
 def index():
-    return routes
+    return {'message': '',
+            'data': routes}
 
 
 def run(addr='localhost', port=9090, **kwargs):
