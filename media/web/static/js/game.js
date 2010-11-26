@@ -6,7 +6,7 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("We win:", data, text_status, xhr, xhr.getResponseHeader('location'));
-
+                     window.location.hash = xhr.getResponseHeader('location').replace(/^\//, '#');
                      return false;
                  },
 
