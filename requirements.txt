@@ -1,3 +1,4 @@
 dulwich
 bottle
 redis
+pyzmq-static
