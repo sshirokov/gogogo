@@ -23,11 +23,33 @@ routes = {
             },
 }
 
-@app.post('/game/:name#[0-9a-f]+#/player/create/', name='game-player-create')
-def register_player(name):
+class ParamFilter(object):
+    def __init__(self, **kwargs):
+        self.filters = kwargs
+
+    def __wrapped__(self, *args, **kwargs):
+        [kwargs.update({key: self.filters.get(key)(val)})
+         for (key, val) in kwargs.items()
+         if self.filters.has_key(key)]
+        return self.fn(*args, **kwargs)
+
+    def __call__(self, fn):
+        self.fn = fn
+        return self.__wrapped__
+
+def with_game(fn):
+    def make_game(game):
+        try: return Game(game)
+        except GameError: raise bottle.HTTPResponse({'message': 'Game not found'}, 404)
+    return ParamFilter(game=make_game)(fn)
+
+@app.post('/game/:game#[0-9a-f]+#/player/create/', name='game-player-create')
+@with_game
+def register_player(game):
     try: data = json.loads(bottle.request.body.read())
     except ValueError: raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
     print "I got data:", data
+    print "For game:", game
 
 @app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-index')
 def branches(name):
