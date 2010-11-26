@@ -51,34 +51,28 @@ def register_player(game):
     print "I got data:", data
     print "For game:", game
 
-@app.get('/game/:name#[0-9a-f]+#/branch/', name='game-branch-index')
-def branches(name):
-    try:
-        game = Game(name)
-        return {'message': '',
-                'data': game.branches()}
-    except GameError:
-        bottle.response.status = 404
-        return {'message': 'Game does not exist'}
+@app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
+@with_game
+def branches(game):
+    return {'message': '',
+            'data': game.branches()}
 
-@app.post('/game/:name#[0-9a-f]+#/branch/create/', name='game-branche-create')
+@app.post('/game/:game#[0-9a-f]+#/branch/create/', name='game-branche-create')
+@with_game
 def create_branch(game):
     pass
 
-@app.get('/game/:name#[0-9a-f]+#/branch/:branch/', name='game-branch')
-def game(name, branch):
+@app.get('/game/:game#[0-9a-f]+#/branch/:branch/', name='game-branch')
+@with_game
+def game(game, branch):
     pass
 
-@app.get('/game/:name#[0-9a-f]+#/', name='game-index')
-def game(name):
-    try:
-        game = Game(name)
-        return {'message': '',
-                'turn': game.board.player_turn(),
-                'data': game.board.take_snapshot()}
-    except GameError:
-        bottle.response.status = 404
-        return {'message': 'Game does not exist'}
+@app.get('/game/:game#[0-9a-f]+#/', name='game-index')
+@with_game
+def game(game):
+    return {'message': '',
+            'turn': game.board.player_turn(),
+            'data': game.board.take_snapshot()}
 
 @app.post('/game/create/', name='game-create')
 def new_game():
