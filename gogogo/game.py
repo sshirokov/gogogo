@@ -21,6 +21,7 @@ class GameError(Exception): pass
 class Game(object):
     "A versioned game"
     def __init__(self, name=None, **options):
+        self.branch = 'master'
         self.name = name or uuid.uuid4().hex
         self.options = dict(DEFAULTS, **options)
         self.options['data'] = self.options['data'].format(name=self.name)
@@ -46,9 +47,7 @@ class Game(object):
     @property
     def _tree(self):
         try: return self.repo[
-                      self.repo.get_object(
-                        self.repo.head()
-                      ).tree
+                      self.repo['refs/heads/%s' % self.branch].tree
                     ]
         except KeyError: return Tree()
 
@@ -61,10 +60,19 @@ class Game(object):
                    if t[1] == 'board.json'].pop()
                  ].data)
 
+    def branch(self, new=None):
+        if new and 'refs/heads/%s' % new in self.repo.get_refs().keys():
+            self.branch = new
+            self.repo.set_symbolic_ref('refs/heads/%s' % self.branch)
+        return self.branch
+
     def branches(self):
         return sorted([name.replace('refs/heads/', '')
                        for (name, sig) in self.repo.get_refs().items()
                        if name != "HEAD"])
+
+    def make_branch(self, back=0):
+        self.repo.revision_history
 
     def save(self, message="Forced commit"):
         blob = Blob.from_string(self.board.as_json())
