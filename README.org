@@ -28,6 +28,6 @@ Version controlled Go game/client/library
     $ go-go.py skip
 
 * TODO-list
-** TODO Maintain multiple branches
+** DONE Maintain multiple branches
    Need a way to update a default game and to be able to rewind and start a new
    named game.

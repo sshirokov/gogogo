@@ -7,6 +7,7 @@ from optparse import OptionParser
 def options_arguments_and_parser():
     parser = OptionParser()
     parser.add_option("-n", "--name", dest="name",
+                      default='default',
                   help="NAME of a game", metavar="NAME")
     parser.add_option('-s', "--skip", dest="skip", action="store_true",
                       default=False,
