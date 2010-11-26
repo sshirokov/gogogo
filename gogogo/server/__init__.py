@@ -4,14 +4,8 @@ import bottle
 from bottle import Bottle
 
 from gogogo.game import Game, GameError
-
-
-app = Bottle(autojson=False)
-def dict2json(o):
-    from gogogo.util import GoJSONEncoder
-    bottle.response.content_type = 'application/json'
-    return json.dumps(o, cls=GoJSONEncoder)
-app.add_filter(dict, dict2json)
+from gogogo.server.app import app
+from gogogo.server.filters import with_game
 
 routes = {
     'root': {
@@ -22,26 +16,6 @@ routes = {
                'POST': [{'/game/create/': 'Create a new game'}],
             },
 }
-
-class ParamFilter(object):
-    def __init__(self, **kwargs):
-        self.filters = kwargs
-
-    def __wrapped__(self, *args, **kwargs):
-        [kwargs.update({key: self.filters.get(key)(val)})
-         for (key, val) in kwargs.items()
-         if self.filters.has_key(key)]
-        return self.fn(*args, **kwargs)
-
-    def __call__(self, fn):
-        self.fn = fn
-        return self.__wrapped__
-
-def with_game(fn):
-    def make_game(game):
-        try: return Game(game)
-        except GameError: raise bottle.HTTPResponse({'message': 'Game not found'}, 404)
-    return ParamFilter(game=make_game)(fn)
 
 @app.post('/game/:game#[0-9a-f]+#/player/create/', name='game-player-create')
 @with_game
