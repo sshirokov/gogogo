@@ -9,6 +9,7 @@ window.gogogo = {
                     });
         $(window).resize(window.gogogo.size_screen);
         $(window).bind('hashchange', gogogo.hash_change);
+        $(window).trigger('hashchange');
     },
 
     hash_change: function(e) {
@@ -67,6 +68,5 @@ window.gogogo = {
 (function($) {
      $(function() {
            window.gogogo.boot($);
-           window.gogogo.show_screens();
      });
 })(jQuery);

@@ -19,6 +19,7 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
+                     $(".messages #player").html(data.turn);
 
                      return false;
                  },
