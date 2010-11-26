@@ -7,17 +7,6 @@ from gogogo.server.app import app
 from gogogo.server.filters import with_game, with_player
 from gogogo.server.app.players import Player
 
-routes = {
-    'root': {
-               'GET': [{'/': 'home'}]
-            },
-    'game': {
-               'GET': [{'/game/{game}/': 'Load game'}],
-               'POST': [{'/game/create/': 'Create a new game'}],
-            },
-}
-
-
 @app.post('/game/:game#[0-9a-f]+#/player/create/', name='game-player-create')
 @with_game
 def register_player(game):
@@ -101,5 +90,4 @@ def new_game():
 
 @app.get('/', name='index')
 def index():
-    return {'message': '',
-            'data': routes}
+    return {'message': ''}
