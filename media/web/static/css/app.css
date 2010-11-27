@@ -15,3 +15,7 @@ div#container {
 .template {
     display: none;
 }
+
+#all {
+    list-style-type: none;
+}
