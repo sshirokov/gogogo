@@ -6,6 +6,8 @@
          color: false,
 
          interval: false,
+         ping: null,
+
          signature: false
      };
      var gfx = window._gfx = {
@@ -48,7 +50,6 @@
                      info.player = data.player;
                      info.color = form_data.player;
                      load_my_board();
-                     ping_player();
                  },
                  error: function(xhr, text_status, errorThrown) {
                      console.log("Failed:", xhr, text_status, errorThrown);
@@ -76,24 +77,24 @@
                  error: function(xhr, text_status, errorThrown) {
                      console.log("Failed to skip:", xhr.status, xhr, text_status, errorThrown);
                  }
-         });
+                });
 
          return false;
      }
 
-   function boot_other(callback) {
-     callback = callback || function(err, data) { };
-     console.log("Booting others: ", info.game, info.player);
+     function boot_other(callback) {
+         callback = callback || function(err, data) { };
+         console.log("Booting others: ", info.game, info.player);
 
-     var url = $("#boot-other").attr("action").replace("{game}", info.game).replace("{player}", info.player);
+         var url = $("#boot-other").attr("action").replace("{game}", info.game).replace("{player}", info.player);
 
-     $.ajax({url: url,
-             type: "POST",
-             success: function(data, text_status, xhr) {
-               console.log("Booted others:", xhr.status, data, text_status, xhr);
-               load_my_board();
-             },
-             error: function(xhr, text_status, errorThrown) {
+         $.ajax({url: url,
+                 type: "POST",
+                 success: function(data, text_status, xhr) {
+                     console.log("Booted others:", xhr.status, data, text_status, xhr);
+                     load_my_board();
+                 },
+                 error: function(xhr, text_status, errorThrown) {
                console.log("Failed to boot others:", xhr.status, xhr, text_status, errorThrown);
              }
             });
@@ -121,31 +122,52 @@
          });
      }
 
-     function ping_player() {
-       var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
-       $("#register").hide();
-       $("#play").show();
-         info.interval = setInterval(function() {
-                                         $.ajax({url : url,
-                                                 type: 'POST',
+     function ping(control) {
+         if(control !== undefined) {
+             if(control) {
+                 //Start the pinger
+                 ping(false); //Sanity kill
+                 info.interval = setInterval(function() { ping(); }, 3000);
+             }
+             else{
+                 //Stop the pinger
+                 if(info.interval) clearInterval(info.interval);
+                 info.interval = null;
+             }
+             return;
+         }
 
-                                                 success: function(data, text_status, xhr) {
-                                                     if(info.signature && data.gamesig != info.signature) {
-                                                         console.log("Game out of date!");
-                                                         gogogo.load_board('/game/' + info.game + '/');
-                                                     }
-                                                 },
-                                                 error: function(xhr, text_status, erroThrown) {
-                                                     if(xhr.status == 404) {
-                                                         clearInterval(info.interval);
-                                                         info.interval = false;
-                                                         $("#play").hide();
-                                                         $("#register").show();
-                                                     }
-                                                 }
-                                               });
-                                     },
-                                     3000);
+         var url = "/game/" + info.game + "/";
+         if(info.player) url += "player/" + info.player + '/';
+         url += "ping/";
+
+         if(info.player) {
+             $("#register").hide();
+             $("#play").show();
+         }
+         if(!info.ping) {
+             info.ping = $.ajax({url : url,
+                                 type: 'POST',
+
+                                 complete: function(xhr, text_status) {
+                                     info.ping = null;
+                                 },
+
+                                 success: function(data, text_status, xhr) {
+                                     if(info.signature && data.gamesig != info.signature) {
+                                         console.log("Game out of date!");
+                                         load_my_board();
+                                     }
+                                 },
+                                 error: function(xhr, text_status, erroThrown) {
+                                     if(info.player && xhr.status == 404) {
+                                         info.player = false;
+                                         $("#play").hide();
+                                         $("#register").show();
+                                     }
+                                 }
+                         });
+         }
      }
 
      function boot() {
@@ -166,12 +188,15 @@
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      info.latest = data;
-                     info.game = data.name;
+                   info.game = data.name;
+                   info.state = data.state;
 
                      if(info.color && !data.over && (data.turn == info.color))
                          my_turn(true);
                      else
-                         my_turn(false);
+                       my_turn(false);
+
+                   console.log("State: ", info.state);
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 
@@ -255,6 +280,7 @@
 
          //Render board if we have one
          if(board && signature) {
+             ping(true);
              if(info.latest.over) {
                  $(".messages #player").html("Game Over");
                  $('.endgame').show();

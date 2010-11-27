@@ -71,7 +71,7 @@ def player_move(game, player):
 
 @app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping')
 @with_game
-def ping_player(game, player):
+def ping_game(game):
     return {'message': '',
             'gamesig': game.signature(),
             'ok': True}
@@ -129,10 +129,13 @@ def game_branch(game, branch):
 @app.get('/game/:game#[0-9a-f]+#/', name='game-index')
 @with_game
 def game(game):
+    play_state = lambda: {0: 'Idle',
+                          1: 'Waiting'}.get(len(Player.find(game.name)), "Full")
     return {'message': '',
             'name': game.name,
             'turn': game.who(),
             'over': game.board.game_over,
+            'state': play_state(),
             'gamesig': game.signature(),
             'scores': game.scores(),
             'data': game.board.take_snapshot()}
