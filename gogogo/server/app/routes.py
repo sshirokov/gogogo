@@ -108,7 +108,7 @@ def create_branch(game):
     try:
         data = json.loads(bottle.request.body.read())
         name = data.get('name', uuid.uuid4().hex)
-        back = data.get('back', 0)
+        back = int(data.get('back', 0))
         if not Player(game.name, data['player']).exists:
             raise GameError("Need player to create branch")
         return {'message': '',

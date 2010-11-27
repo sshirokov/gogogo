@@ -39,7 +39,7 @@
          var url = $(this).attr('action').replace('{game}', info.game);
          var form_data = {
              name: $(this).find('input[name=name]:first').val(),
-             back: 0,
+             back: praseInt($(this).find('input[name=back]:first').val()),
              player: info.player
          };
          console.log("Want to create branch:", url, form_data);
@@ -69,6 +69,7 @@
                   data: JSON.stringify({ name: branch, player: info.player}),
                   success: function(data, text_status, xhr) {
                       console.log("Branch switched to:", branch, data, text_status, xhr);
+                      load_branches();
                   },
                   error: function(xhr, text_status, errorThrown) {
                       console.log("Couldn't switch to branch: ", branch, xhr, text_status, errorThrown);
@@ -260,7 +261,6 @@
                          });
          }
 
-         console.log("Ping says state is:", info.state);
          if(info.state == "Full") {
              $('#register').hide();
          }
