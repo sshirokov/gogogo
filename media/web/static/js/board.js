@@ -1,7 +1,9 @@
 (function($) {
      var info = window._info = {
          game: false,
+         latest: null,
          player: false,
+
          interval: false,
          signature: false
      };
@@ -20,6 +22,9 @@
 
          }
      };
+     function load_my_board() {
+         gogogo.load_board('/game/' + info.game + '/');
+     }
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
@@ -32,7 +37,7 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("Moved:", xhr.status, data, text_status, xhr);
-                     draw_board(data.data, data.gamesig);
+                     load_my_board();
                  },
                  error: function(xhr, text_status, errorThrown) {
                      console.log("Failed to move:", xhr.status, xhr, text_status, errorThrown);
@@ -102,6 +107,7 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
+                     info.latest = data;
                      info.game = data.name;
                      if(data.over) {
                          $(".messages #player").html("Game Over");
