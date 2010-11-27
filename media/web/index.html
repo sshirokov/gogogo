@@ -38,15 +38,19 @@
           </div>
         </div>
 
-        <div id="branches">
+        <div class="controls" id="branches">
           <div>Currently on: <span class="current">Loading...</span></div>
           <div>
             <ul id="all">
               <li id="branch__{branch}" class="branch template">
                 {branch}
                 <button type="button">Switch</button>
-              </li>
+                </li>
             </ul>
+            <form action="/game/{game}/branch/create/" method="POST" id="create-branch">
+              <label for="branch_name">New:</label>
+              <input name="name" type="text" id="branch_name">
+            </form>
           </div>
         </div>
 
