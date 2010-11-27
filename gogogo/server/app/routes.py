@@ -69,6 +69,13 @@ def player_move(game, player):
             'status': game.move(x, y) and True or False,
             'gamesig': game.signature()}
 
+@app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping')
+@with_game
+def ping_player(game, player):
+    return {'message': '',
+            'gamesig': game.signature(),
+            'ok': True}
+
 
 @app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
 @with_game
