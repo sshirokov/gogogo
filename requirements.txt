@@ -2,3 +2,4 @@ mimeparse
 dulwich
 bottle
 redis
+tornado
