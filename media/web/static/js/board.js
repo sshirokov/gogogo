@@ -34,6 +34,12 @@
          gogogo.load_board('/game/' + info.game + '/');
      }
 
+     function create_branch() {
+         console.log("Want to create branch");
+
+         return false;
+     }
+
      function update_branches() {
          $('#branches .current').html(info.branches.current);
        $(info.branches.all).each(function(i, branch) {
@@ -41,7 +47,10 @@
                                      template.removeClass('template');
                                      template.attr('id',
                                                    template.attr('id').replace('{branch}', branch));
-                                     template.html(template.html().replace(/\{branch\}/gm, branch));
+                                   template.html(template.html().replace(/\{branch\}/gm, branch));
+                                   $("button, ", template).click(function() {
+                                                                   load_branch(branch);
+                                                  });
                                      $('#branches .branch.template:first').parent().
                                          append(template);
                                  });
@@ -226,6 +235,7 @@
          $('#register-form').submit(register_form);
          $("#skip-form").submit(function() { return skip_move(info.game, info.player) });
          $("#boot-other").submit(function() { return boot_other() });
+         $('#create-branch-form').submit(create_branch);
 
          $("#game.screen .controls").hide();
          $("#game.screen .controls.default").show();

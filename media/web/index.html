@@ -47,9 +47,10 @@
                 <button type="button">Switch</button>
                 </li>
             </ul>
-            <form action="/game/{game}/branch/create/" method="POST" id="create-branch">
+            <form action="/game/{game}/branch/create/" method="POST" id="create-branch-form">
               <label for="branch_name">New:</label>
-              <input name="name" type="text" id="branch_name">
+              <input name="name" type="text" id="branch_name" />
+              <input type="submit" value="Create" />
             </form>
           </div>
         </div>
