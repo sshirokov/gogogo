@@ -25,6 +25,53 @@
      function load_my_board() {
          gogogo.load_board('/game/' + info.game + '/');
      }
+
+     function register_form(e) {
+         var data = {},
+         url = $(this).attr('action').replace('{game}', info.game);
+         $($(this).serializeArray()).each(function(i, v) {
+                                              data[v.name] = v.value;
+                                          });
+         $.ajax({url: url,
+                 type: $(this).attr('method'),
+                 data: JSON.stringify(data),
+
+                 success: function(data, text_status, xhr) {
+                     console.log("Registered:", data, text_status, xhr);
+                     info.player = data.player;
+                     ping_player();
+                 },
+                 error: function(xhr, text_status, errorThrown) {
+                     console.log("Failed:", xhr, text_status, errorThrown);
+                     if(xhr.status == 409) {
+                         console.log("Already have a player registration");
+                     }
+                 }
+                });
+         return false;
+     }
+
+     function skip_move(game, player, callback) {
+         callback = callback || function(err, data) {};
+         console.log("Want skip:", game, player);
+
+         var url = '/game/' + info.game + '/player/' + info.player + '/skip/';
+
+         $.ajax({url: url,
+                 type: "POST",
+
+                 success: function(data, text_status, xhr) {
+                     console.log("Skipped:", xhr.status, data, text_status, xhr);
+                     load_my_board();
+                 },
+                 error: function(xhr, text_status, errorThrown) {
+                     console.log("Failed to skip:", xhr.status, xhr, text_status, errorThrown);
+                 }
+         });
+
+         return false;
+     }
+
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
@@ -48,7 +95,7 @@
      function ping_player() {
        var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
        $("#register").hide();
-
+       $("#play").show();
          info.interval = setInterval(function() {
                                          $.ajax({url : url,
                                                  type: 'POST',
@@ -63,6 +110,7 @@
                                                      if(xhr.status == 404) {
                                                          clearInterval(info.interval);
                                                          info.interval = false;
+                                                         $("#play").hide();
                                                          $("#register").show();
                                                      }
                                                  }
@@ -73,31 +121,11 @@
 
      function boot() {
          //Register events relevant to a board
-         function register_form(e) {
-             var data = {},
-                 url = $(this).attr('action').replace('{game}', info.game);
-             $($(this).serializeArray()).each(function(i, v) {
-                                                  data[v.name] = v.value;
-                                              });
-             $.ajax({url: url,
-                     type: $(this).attr('method'),
-                     data: JSON.stringify(data),
-
-                     success: function(data, text_status, xhr) {
-                         console.log("Registered:", data, text_status, xhr);
-                         info.player = data.player;
-                         ping_player();
-                     },
-                     error: function(xhr, text_status, errorThrown) {
-                         console.log("Failed:", xhr, text_status, errorThrown);
-                         if(xhr.status == 409) {
-                             console.log("Already have a player registration");
-                         }
-                     }
-             });
-             return false;
-         }
          $('#register-form').submit(register_form);
+         $("#skip-form").submit(function() { return skip_move(info.game, info.player) });
+
+         $("#game.screen .controls").hide();
+         $("#game.screen .controls.default").show();
      }
 
      function load_board(url) {
@@ -197,6 +225,7 @@
              }
              else {
                  $(".messages #player").html(info.latest.turn);
+                 //TODO: Is it my turn!?
              }
 
              info.signature = signature;

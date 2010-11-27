@@ -26,10 +26,12 @@
 
       <div class="screen" id="game">
         <script src="/static/js/board.js" type="application/javascript"></script>
+
         <div class="messages">
           <div>Turn: <span id="player">Loading...</span></div>
         </div>
-        <div id="register">
+
+        <div class="controls default" id="register">
           <form method="POST" id="register-form" action="/game/{game}/player/create/">
             <label for="register-player">Register as:</label>
             <select id="register-player"  name="player">
@@ -38,6 +40,14 @@
             </select>
             <input type="submit" value="Go!"/>
           </form>
+        </div>
+
+        <div class="controls" id="play">
+          <div class="my-turn">
+            <form method="POST" id="skip-form" action="/game/{game}/player/{player}/skip/">
+              <input type="submit" value="Skip" />
+            </form>
+          </div>
         </div>
       </div>
     </div>
