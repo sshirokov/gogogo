@@ -21,10 +21,16 @@
      }
 
      function load_game() {
-         console.log("Loading game");
+         var form_data = {};
+         $($(this).serializeArray()).each(function(i, v) {
+                                              form_data[v.name] = v.value;
+                                          });
+         var url = $(this).attr('action').replace('{game}', form_data['game-id']).replace(/^\//, '#');
+         window.location.hash = url;
 
          return false;
      }
+
      $(function() {
            $('form#new-game').submit(new_game);
            $('form#go-to-game').submit(load_game);

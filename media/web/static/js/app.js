@@ -20,7 +20,8 @@ window.gogogo = {
         var frag_url = '/' + e.fragment;
         $('form[method=GET]').each(function(i, v) {
                                        var node = $(v),
-                                           action = node.attr('action');
+                                           action = node.attr('action'),
+                                           callback = node.find('input[name=callback]:first').attr('value');
                                        var search = action.replace(/{.+?}/g, '(.+?)'),
                                            template = action.replace(/{.+?}/g, '{replace}');
                                        var found = frag_url.match(search);
@@ -31,7 +32,7 @@ window.gogogo = {
                                            });
                                            console.log(i, "=>", node, "=>", action, "=>", search, found);
                                            console.log("Generated:", template);
-                                           window.gogogo.load_board(template);
+                                           eval(callback)(template);
                                        }
         });
         window.gogogo.show_screens();
