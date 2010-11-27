@@ -21,11 +21,9 @@ class Player(object):
         #Options override
         [setattr(self, key, value) for key, value in options.items()]
 
-        print "Looking up:", self.key
         if self.exists and self.refresh:
             self.fetch()
             self.save()
-        print "Info:", self.info
 
     def fetch(self):
         self.info = self.db.hgetall(self.key)
@@ -61,7 +59,6 @@ class Player(object):
             return players
         def player_matches_kwargs(player):
             player.fetch()
-            print "Testing:", player.info, "vs", kwargs
             return reduce(lambda acc, k_v: acc and \
                                             (player.info.get(k_v[0]) == k_v[1]) and not_excluded(*k_v),
                           kwargs.items(),
