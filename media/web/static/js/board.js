@@ -145,6 +145,9 @@
              $("#register").hide();
              $("#play").show();
          }
+         else {
+             info.color = null;
+         }
          if(!info.ping) {
              info.ping = $.ajax({url : url,
                                  type: 'POST',
@@ -163,7 +166,6 @@
                                  error: function(xhr, text_status, erroThrown) {
                                      if(info.player && xhr.status == 404) {
                                          info.player = false;
-                                         info.color = null;
                                          $("#play").hide();
                                          $("#register").show();
                                      }
