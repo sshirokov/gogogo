@@ -31,6 +31,7 @@ def register_player(game):
 def ping_player(game, player):
     return {'message': '',
             'player': player.uid,
+            'gamesig': game.signature(),
             'ok': True}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/skip/', name='game-player-skip')
@@ -41,6 +42,7 @@ def player_skip(game, player):
         raise bottle.HTTPResponse({'message': 'Not your turn', 'status': False}, 409)
     return {'message': '',
             'status': game.skip(),
+            'gamesig': game.signature(),
             'data': game.board.take_snapshot()}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')
@@ -57,6 +59,7 @@ def player_move(game, player):
         raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
     return {'message': '',
             'status': game.move(x, y) and True or False,
+            'gamesig': game.signature(),
             'data': game.board.take_snapshot()}
 
 
@@ -105,6 +108,7 @@ def game_branch(game, branch):
             'name': game.name,
             'turn': board.player_turn(),
             'over': board.game_over,
+            'gamesig': game.signature(branch),
             'data': board.take_snapshot()}
 
 @app.get('/game/:game#[0-9a-f]+#/', name='game-index')
@@ -114,6 +118,7 @@ def game(game):
             'name': game.name,
             'turn': game.who(),
             'over': game.board.game_over,
+            'gamesig': game.signature(),
             'data': game.board.take_snapshot()}
 
 @app.post('/game/create/', name='game-create')

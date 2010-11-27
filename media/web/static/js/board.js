@@ -2,7 +2,8 @@
      var info = window._info = {
          game: false,
          player: false,
-         interval: false
+         interval: false,
+         signature: false
      };
      var gfx = window._gfx = {
          paper: undefined,
@@ -19,6 +20,25 @@
 
          }
      };
+     function make_move(game, player, x, y, callback) {
+         callback = callback || function(err, data) {};
+         console.log("Want move:", game, player, x, y);
+
+         var url = '/game/' + info.game + '/player/' + info.player + '/move/';
+
+         $.ajax({url: url,
+                 type: "POST",
+                 data: JSON.stringify({x: x, y: y}),
+
+                 success: function(data, text_status, xhr) {
+                     console.log("Moved:", xhr.status, data, text_status, xhr);
+                     draw_board(data.data, data.gamesig);
+                 },
+                 error: function(xhr, text_status, errorThrown) {
+                     console.log("Failed to move:", xhr.status, xhr, text_status, errorThrown);
+                 }
+         });
+     }
 
      function ping_player() {
        var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
@@ -28,7 +48,12 @@
                                          $.ajax({url : url,
                                                  type: 'POST',
 
-                                                 success: function() { },
+                                                 success: function(data, text_status, xhr) {
+                                                     if(info.signature && data.gamesig != info.signature) {
+                                                         console.log("Game out of date!");
+                                                         gogogo.load_board('/game/' + info.game + '/');
+                                                     }
+                                                 },
                                                  error: function(xhr, text_status, erroThrown) {
                                                      if(xhr.status == 404) {
                                                          clearInterval(info.interval);
@@ -85,7 +110,7 @@
                          $(".messages #player").html(data.turn);
                      }
 
-                     window.gogogo.draw_board(data.data);
+                     window.gogogo.draw_board(data.data, data.gamesig);
 
                      return false;
                  },
@@ -98,7 +123,7 @@
          });
      }
 
-     function draw_board(board) {
+     function draw_board(board, signature) {
          gfx.paper.clear();
          gfx.elements = {};
 
@@ -153,6 +178,10 @@
                  var make_click = function(x, y) {
                      return function(even) {
                          console.log("Clicked:", this, x, y);
+                         window.gogogo.make_move(info.game, info.player, x, y, function(err, data) {
+                                                if(err) console.log("Error:", data);
+                                                else console.log("Moved:", data);
+                                            });
                      };
                  };
                  pos.click(make_click(col, row));
@@ -162,7 +191,8 @@
          }
 
          //Render board if we have one
-         if(board) {
+         if(board && signature) {
+             info.signature = signature;
              function player_to_color(player) {
                  return {'Black': '#000', 'White': '#fff'}[player];
              }
@@ -198,6 +228,7 @@
      //Publish and API
      window.gogogo.load_board = load_board;
      window.gogogo.draw_board = draw_board;
+     window.gogogo.make_move = make_move;
 
      //Boot
      $(function() {

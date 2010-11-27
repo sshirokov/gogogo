@@ -59,6 +59,11 @@ class Game(object):
                     ]
         except KeyError: return Tree()
 
+    def signature(self, of=None):
+        of = (of and "refs/heads/%s" % of) or "HEAD"
+        try: return self.repo.refs[of]
+        except KeyError: return None
+
 
     def get_board(self, branch=None):
         branch = branch or 'master'
