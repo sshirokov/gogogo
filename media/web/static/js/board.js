@@ -188,15 +188,22 @@
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      info.latest = data;
-                   info.game = data.name;
-                   info.state = data.state;
+                     info.game = data.name;
+                     info.state = data.state;
 
                      if(info.color && !data.over && (data.turn == info.color))
                          my_turn(true);
                      else
-                       my_turn(false);
+                         my_turn(false);
 
-                   console.log("State: ", info.state);
+                     console.log("State: ", info.state);
+
+                     if(info.state == "Full") {
+                         $('#register').hide();
+                     }
+                     else {
+                         if(!info.player) $('#register').show();
+                     }
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 
