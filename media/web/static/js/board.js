@@ -163,6 +163,7 @@
                                  error: function(xhr, text_status, erroThrown) {
                                      if(info.player && xhr.status == 404) {
                                          info.player = false;
+                                         info.color = null;
                                          $("#play").hide();
                                          $("#register").show();
                                      }
