@@ -34,14 +34,17 @@
          gogogo.load_board('/game/' + info.game + '/');
      }
 
-     function create_branch() {
+     function create_branch() {try{
          if(!info.player) return false;
          var url = $(this).attr('action').replace('{game}', info.game);
          var form_data = {
              name: $(this).find('input[name=name]:first').val(),
-             back: praseInt($(this).find('input[name=back]:first').val()),
+             back: parseInt($(this).find('input[name=back]:first').val()),
              player: info.player
          };
+
+    $(this).find('input[type=text]').val('');
+
          console.log("Want to create branch:", url, form_data);
          $.ajax({ url: url,
                   type: 'POST',
@@ -55,6 +58,9 @@
                       console.log("Couldn't create branch: ", xhr.status, xhr, text_status, errorThrown);
                   }
          });
+} catch (x) {
+    console.log("Error", x);
+}
 
 
          return false;
