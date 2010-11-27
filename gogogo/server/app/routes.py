@@ -92,6 +92,8 @@ def change_branch(game):
     try:
         data = json.loads(bottle.request.body.read())
         name = data['name']
+        if not Player(game.name, data['player']).exists:
+            raise GameError("Need player to create branch")
         return {'message': '',
                 'status': game.set_branch(name)}
     except (ValueError, KeyError):
@@ -107,6 +109,8 @@ def create_branch(game):
         data = json.loads(bottle.request.body.read())
         name = data.get('name', uuid.uuid4().hex)
         back = data.get('back', 0)
+        if not Player(game.name, data['player']).exists:
+            raise GameError("Need player to create branch")
         return {'message': '',
                 'status': game.make_branch(name, back)}
     except (ValueError, KeyError):

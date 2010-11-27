@@ -35,10 +35,45 @@
      }
 
      function create_branch() {
-         console.log("Want to create branch");
+         if(!info.player) return false;
+         var url = $(this).attr('action').replace('{game}', info.game);
+         var form_data = {
+             name: $(this).find('input[name=name]:first').val(),
+             back: 0,
+             player: info.player
+         };
+         console.log("Want to create branch:", url, form_data);
+         $.ajax({ url: url,
+                  type: 'POST',
+                  data: JSON.stringify(form_data),
+
+                  success: function(data, text_status, xhr) {
+                      console.log("Branch crated:", data, text_status, xhr);
+                      load_branches();
+                  },
+                  error: function(xhr, text_status, errorThrown) {
+                      console.log("Couldn't create branch: ", xhr.status, xhr, text_status, errorThrown);
+                  }
+         });
+
 
          return false;
      }
+
+   function change_branch(branch) {
+     var url = "/game/{game}/branch/change/".replace("{game}", info.game);
+
+     $.ajax({ url: url,
+              type: 'POST',
+              data: JSON.stringify({ name: branch}),
+              success: function(data, text_status, xhr) {
+                console.log("Branch switched to:", branch, data, text_status, xhr);
+              },
+              error: function(xhr, text_status, errorThrown) {
+                console.log("Couldn't switch to branch: ", branch, xhr, text_status, errorThrown);
+              }
+            });
+   }
 
      function update_branches() {
          $('#branches .current').html(info.branches.current);
@@ -49,7 +84,7 @@
                                                    template.attr('id').replace('{branch}', branch));
                                    template.html(template.html().replace(/\{branch\}/gm, branch));
                                    $("button, ", template).click(function() {
-                                                                   load_branch(branch);
+                                                                   change_branch(branch);
                                                   });
                                      $('#branches .branch.template:first').parent().
                                          append(template);
