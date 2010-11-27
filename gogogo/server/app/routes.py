@@ -113,7 +113,7 @@ def create_branch(game):
             raise GameError("Need player to create branch")
         return {'message': '',
                 'status': game.make_branch(name, back)}
-    except (ValueError, KeyError):
+    except (ValueError, TypeError, KeyError):
         raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
     except GameError:
         raise bottle.HTTPResponse({'message': "Could not create branch"}, 409)
