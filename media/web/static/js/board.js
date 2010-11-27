@@ -3,6 +3,7 @@
          game: false,
          latest: null,
          player: false,
+         color: false,
 
          interval: false,
          signature: false
@@ -26,19 +27,26 @@
          gogogo.load_board('/game/' + info.game + '/');
      }
 
+     function my_turn(is_it) {
+         console.log("Is it my turn?", is_it);
+         $('.my-turn').toggle(is_it);
+     }
+
      function register_form(e) {
-         var data = {},
+         var form_data = {},
          url = $(this).attr('action').replace('{game}', info.game);
          $($(this).serializeArray()).each(function(i, v) {
-                                              data[v.name] = v.value;
+                                              form_data[v.name] = v.value;
                                           });
          $.ajax({url: url,
                  type: $(this).attr('method'),
-                 data: JSON.stringify(data),
+                 data: JSON.stringify(form_data),
 
                  success: function(data, text_status, xhr) {
                      console.log("Registered:", data, text_status, xhr);
                      info.player = data.player;
+                     info.color = form_data.player;
+                     load_my_board();
                      ping_player();
                  },
                  error: function(xhr, text_status, errorThrown) {
@@ -137,6 +145,11 @@
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      info.latest = data;
                      info.game = data.name;
+
+                     if(info.color && !data.over && (data.turn == info.color))
+                         my_turn(true);
+                     else
+                         my_turn(false);
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 
