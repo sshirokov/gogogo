@@ -197,9 +197,8 @@
                  return {'Black': '#000', 'White': '#fff'}[player];
              }
 
-             $(board.moves).each(function(i, v) {
-                                     console.log("Move:", v.player, v.passing, "(" + v.x + ",", v.y + ")");
-                                     if(!v.passing) {
+             $(board.positions).each(function(i, v) {
+                                     console.log("Stored position:", v.owner, "(" + v.x + ",", v.y + ")");
                                          gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
                                          gfx.elements.stones[v.player].push(
                                              gfx.paper.circle(gfx.corner_offset + (
@@ -209,9 +208,8 @@
                                                                   ((board.height - 1) - v.y) * gfx.step
                                                               ),
                                                               gfx.stone).
-                                                       attr({fill: player_to_color(v.player)})
+                                                       attr({fill: player_to_color(v.owner)})
                                          );
-                                     }
                                  });
 
          }
