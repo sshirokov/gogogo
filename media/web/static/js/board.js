@@ -154,6 +154,7 @@
                                  },
 
                                  success: function(data, text_status, xhr) {
+                                     info.state = data.state;
                                      if(info.signature && data.gamesig != info.signature) {
                                          console.log("Game out of date!");
                                          load_my_board();
@@ -167,6 +168,14 @@
                                      }
                                  }
                          });
+         }
+
+         console.log("Ping says state is:", info.state);
+         if(info.state == "Full") {
+             $('#register').hide();
+         }
+         else {
+             if(!info.player) $('#register').show();
          }
      }
 
@@ -197,13 +206,6 @@
                          my_turn(false);
 
                      console.log("State: ", info.state);
-
-                     if(info.state == "Full") {
-                         $('#register').hide();
-                     }
-                     else {
-                         if(!info.player) $('#register').show();
-                     }
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 

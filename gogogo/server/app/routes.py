@@ -31,6 +31,7 @@ def register_player(game):
 def ping_player(game, player):
     return {'message': '',
             'player': player.uid,
+            'state': Player.game_state(game.name),
             'gamesig': game.signature(),
             'ok': True}
 
@@ -73,6 +74,7 @@ def player_move(game, player):
 @with_game
 def ping_game(game):
     return {'message': '',
+            'state': Player.game_state(game.name),
             'gamesig': game.signature(),
             'ok': True}
 
@@ -129,13 +131,11 @@ def game_branch(game, branch):
 @app.get('/game/:game#[0-9a-f]+#/', name='game-index')
 @with_game
 def game(game):
-    play_state = lambda: {0: 'Idle',
-                          1: 'Waiting'}.get(len(Player.find(game.name)), "Full")
     return {'message': '',
             'name': game.name,
             'turn': game.who(),
             'over': game.board.game_over,
-            'state': play_state(),
+            'state': Player.game_state(game.name),
             'gamesig': game.signature(),
             'scores': game.scores(),
             'data': game.board.take_snapshot()}

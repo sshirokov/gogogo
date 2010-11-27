@@ -51,6 +51,11 @@ class Player(object):
         return self.db.delete(self.key)
 
     @classmethod
+    def game_state(cls, game):
+        return {0: 'Idle',
+                1: 'Waiting'}.get(len(cls.find(game)), "Full")
+
+    @classmethod
     def find(cls, game, **kwargs):
         players_key = cls._set.format(game=game)
         exclude = kwargs.pop('exclude', {})
