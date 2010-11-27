@@ -28,7 +28,13 @@
         <script src="/static/js/board.js" type="application/javascript"></script>
 
         <div class="messages">
-          <div>Turn: <span id="player">Loading...</span></div>
+          <div>
+            Turn: <span id="player">Loading...</span>
+            <span class="my-turn">(Your Turn)</span>
+          </div>
+          <div class="endgame">
+            Score: <span id="scores">Loading...</span>
+          </div>
         </div>
 
         <div class="controls default" id="register">
@@ -43,6 +49,11 @@
         </div>
 
         <div class="controls" id="play">
+          <div id="game-controls">
+            <form method="POST" id="boot-other" action="/game/{game}/player/{player}/kick/">
+              <input type="submit" value="Boot other player"/>
+            </form>
+          </div>
           <div class="my-turn">
             <form method="POST" id="skip-form" action="/game/{game}/player/{player}/skip/">
               <input type="submit" value="Skip" />

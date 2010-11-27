@@ -30,6 +30,7 @@
      function my_turn(is_it) {
          console.log("Is it my turn?", is_it);
          $('.my-turn').toggle(is_it);
+         $('.not.my-turn').toggle(!is_it);
      }
 
      function register_form(e) {
@@ -235,10 +236,11 @@
          if(board && signature) {
              if(info.latest.over) {
                  $(".messages #player").html("Game Over");
+                 $('.endgame').show();
              }
              else {
                  $(".messages #player").html(info.latest.turn);
-                 //TODO: Is it my turn!?
+                 $('.endgame').hide();
              }
 
              info.signature = signature;
