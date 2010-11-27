@@ -109,12 +109,6 @@
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      info.latest = data;
                      info.game = data.name;
-                     if(data.over) {
-                         $(".messages #player").html("Game Over");
-                     }
-                     else {
-                         $(".messages #player").html(data.turn);
-                     }
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 
@@ -198,6 +192,13 @@
 
          //Render board if we have one
          if(board && signature) {
+             if(info.latest.over) {
+                 $(".messages #player").html("Game Over");
+             }
+             else {
+                 $(".messages #player").html(info.latest.turn);
+             }
+
              info.signature = signature;
              function player_to_color(player) {
                  return {'Black': '#000', 'White': '#fff'}[player];
