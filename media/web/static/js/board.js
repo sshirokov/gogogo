@@ -132,6 +132,7 @@
          //Register events relevant to a board
          $('#register-form').submit(register_form);
          $("#skip-form").submit(function() { return skip_move(info.game, info.player) });
+         $("#boot-other").submit(function() { return false; });
 
          $("#game.screen .controls").hide();
          $("#game.screen .controls.default").show();
@@ -237,6 +238,7 @@
              if(info.latest.over) {
                  $(".messages #player").html("Game Over");
                  $('.endgame').show();
+                 $('.endgame #scores').html(JSON.stringify(info.latest.scores));
              }
              else {
                  $(".messages #player").html(info.latest.turn);
