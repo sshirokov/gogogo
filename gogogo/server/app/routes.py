@@ -49,7 +49,7 @@ def player_skip(game, player):
 @with_player
 def boot_other(game, player):
     print "Me:", player
-    print "Others:", Player.find(game.name, exclude={'player': player.uid})
+    print "Others:", Player.find(game.name, exclude={'uid': player.uid})
     return {'message': ''}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')

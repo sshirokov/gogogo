@@ -51,18 +51,19 @@ class Player(object):
     def find(cls, game, **kwargs):
         players_key = cls._set.format(game=game)
         exclude = kwargs.pop('exclude', {})
-        def not_excluded(k, v):
-            return True
         def get_known_players():
             players = cls._redis.smembers(players_key)
             players = [Player(game, player, refresh=False) for player in players]
             return players
         def player_matches_kwargs(player):
             player.fetch()
-            return reduce(lambda acc, k_v: acc and \
-                                            (player.info.get(k_v[0]) == k_v[1]) and not_excluded(*k_v),
+            return reduce(lambda acc, k_v: acc and (player.info.get(k_v[0]) == k_v[1]),
                           kwargs.items(),
                           True)
+        def player_is_excluded(player):
+            return exclude and reduce(lambda acc, k_v: acc and (player.info.get(k_v[0]) or getattr(player, k_v[0], None) == k_v[1]),
+                                      exclude.items(),
+                                      True)
 
         #Clean the game player set based on expiry
         transaction = cls._redis.pipeline()
@@ -71,7 +72,7 @@ class Player(object):
          if not player.exists]
         transaction.execute()
 
-        return [player for player in get_known_players() if player_matches_kwargs(player)]
+        return [player for player in get_known_players() if player_matches_kwargs(player) and not player_is_excluded(player)]
 
 
     def __unicode__(self):
