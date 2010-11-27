@@ -48,9 +48,10 @@ def player_skip(game, player):
 @with_game
 @with_player
 def boot_other(game, player):
-    print "Me:", player
-    print "Others:", Player.find(game.name, exclude={'uid': player.uid})
-    return {'message': ''}
+    print "Others:", 
+    return {'message': '',
+            'count': len([p.delete()
+                          for p in Player.find(game.name, exclude={'uid': player.uid})])}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')
 @with_game

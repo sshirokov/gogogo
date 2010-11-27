@@ -47,6 +47,9 @@ class Player(object):
             return None
         return self
 
+    def delete(self):
+        return self.db.delete(self.key)
+
     @classmethod
     def find(cls, game, **kwargs):
         players_key = cls._set.format(game=game)
