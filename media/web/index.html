@@ -38,6 +38,18 @@
           </div>
         </div>
 
+        <div id="branches">
+          <div>Currently on: <span class="current">Loading...</span></div>
+          <div>
+            <ul id="all">
+              <li id="branch__{branch}" class="branch template">
+                {branch}
+                <button type="button">Switch</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <div class="controls default" id="register">
           <form method="POST" id="register-form" action="/game/{game}/player/create/">
             <label for="register-player">Register as:</label>

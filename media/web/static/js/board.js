@@ -5,6 +5,11 @@
          player: false,
          color: false,
 
+         branches: {
+             current: null,
+             all: []
+         },
+
          interval: false,
          ping: null,
 
@@ -27,6 +32,39 @@
      };
      function load_my_board() {
          gogogo.load_board('/game/' + info.game + '/');
+     }
+
+     function update_branches() {
+         $('#branches .current').html(info.branches.current);
+       $(info.branches.all).each(function(i, branch) {
+                                     var template = $('#branches .branch.template:first').clone();
+                                     template.removeClass('template');
+                                     template.attr('id',
+                                                   template.attr('id').replace('{branch}', branch));
+                                     template.html(template.html().replace(/\{branch\}/gm, branch));
+                                     $('#branches .branch.template:first').parent().
+                                         append(template);
+                                 });
+     }
+
+     function load_branches() {
+         var url = '/game/' + info.game + '/branch/';
+         console.log("Getting branches from:", url);
+
+         $.ajax({url: url,
+                 type: 'GET',
+
+                 success: function(data, text_status, xhr) {
+                     console.log("Got branches:", data, text_status, xhr);
+                     info.branches.current = data.current;
+                     info.branches.all = data.branches;
+
+                     update_branches();
+                 },
+                 error: function(xhr, text_status, errorThrown) {
+                     console.log("Failed to get branches:", xhr, text_status, errorThrown);
+                 }
+                });
      }
 
      function my_turn(is_it) {
@@ -158,8 +196,9 @@
 
                                  success: function(data, text_status, xhr) {
                                      info.state = data.state;
-                                     if(info.signature && data.gamesig != info.signature) {
+                                     if(data.gamesig != info.signature) {
                                          console.log("Game out of date!");
+                                         load_branches();
                                          load_my_board();
                                      }
                                  },
@@ -193,6 +232,11 @@
      }
 
      function load_board(url) {
+         if(!info.signature) {
+             console.log("We're unsigned. Booting the pinger");
+             ping(true);
+         }
+
          console.log("Loading board from:", url);
          $.ajax({url: url,
                  type: 'GET',
@@ -200,7 +244,10 @@
                  success: function(data, text_status, xhr) {
                      console.log("We win a board:", data, text_status, xhr, xhr.getResponseHeader('location'));
                      info.latest = data;
-                     info.game = data.name;
+                     if(info.game != data.name) {
+                         info.game = data.name;
+                         load_branches();
+                     }
                      info.state = data.state;
 
                      if(info.color && !data.over && (data.turn == info.color))
@@ -292,7 +339,6 @@
 
          //Render board if we have one
          if(board && signature) {
-             ping(true);
              if(info.latest.over) {
                  $(".messages #player").html("Game Over");
                  $('.endgame').show();
@@ -309,7 +355,6 @@
              }
 
              $(board.positions).each(function(i, v) {
-                                     console.log("Stored position:", v.owner, "(" + v.x + ",", v.y + ")");
                                          gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
                                          gfx.elements.stones[v.player].push(
                                              gfx.paper.circle(gfx.corner_offset + (

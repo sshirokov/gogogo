@@ -11,3 +11,7 @@ div#container {
     display: block;
     position: relative;
 }
+
+.template {
+    display: none;
+}
