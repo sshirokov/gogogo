@@ -60,35 +60,39 @@
          return false;
      }
 
-   function change_branch(branch) {
-     var url = "/game/{game}/branch/change/".replace("{game}", info.game);
+     function change_branch(branch) {
+         if(!info.player) return false;
+         var url = "/game/{game}/branch/change/".replace("{game}", info.game);
 
-     $.ajax({ url: url,
-              type: 'POST',
-              data: JSON.stringify({ name: branch}),
-              success: function(data, text_status, xhr) {
-                console.log("Branch switched to:", branch, data, text_status, xhr);
-              },
-              error: function(xhr, text_status, errorThrown) {
-                console.log("Couldn't switch to branch: ", branch, xhr, text_status, errorThrown);
-              }
-            });
-   }
+         $.ajax({ url: url,
+                  type: 'POST',
+                  data: JSON.stringify({ name: branch, player: info.player}),
+                  success: function(data, text_status, xhr) {
+                      console.log("Branch switched to:", branch, data, text_status, xhr);
+                  },
+                  error: function(xhr, text_status, errorThrown) {
+                      console.log("Couldn't switch to branch: ", branch, xhr, text_status, errorThrown);
+                  }
+                });
+
+         return false;
+     }
 
      function update_branches() {
          $('#branches .current').html(info.branches.current);
-       $(info.branches.all).each(function(i, branch) {
-                                     var template = $('#branches .branch.template:first').clone();
-                                     template.removeClass('template');
-                                     template.attr('id',
-                                                   template.attr('id').replace('{branch}', branch));
-                                   template.html(template.html().replace(/\{branch\}/gm, branch));
-                                   $("button, ", template).click(function() {
-                                                                   change_branch(branch);
-                                                  });
-                                     $('#branches .branch.template:first').parent().
-                                         append(template);
-                                 });
+         $('#branches .branch').filter(':not(.template)').remove();
+         $(info.branches.all).each(function(i, branch) {
+                                       var template = $('#branches .branch.template:first').clone();
+                                       template.removeClass('template');
+                                       template.attr('id',
+                                                     template.attr('id').replace('{branch}', branch));
+                                       template.html(template.html().replace(/\{branch\}/gm, branch));
+                                       $("button", template).click(function() {
+                                                                         return change_branch(branch);
+                                                                     });
+                                       $('#branches .branch.template:first').parent().
+                                           append(template);
+                                   });
      }
 
      function load_branches() {
