@@ -42,8 +42,7 @@ def player_skip(game, player):
         raise bottle.HTTPResponse({'message': 'Not your turn', 'status': False}, 409)
     return {'message': '',
             'status': game.skip(),
-            'gamesig': game.signature(),
-            'data': game.board.take_snapshot()}
+            'gamesig': game.signature()}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')
 @with_game
@@ -59,8 +58,7 @@ def player_move(game, player):
         raise bottle.HTTPResponse({'message': "JSON seems invalid"}, 400)
     return {'message': '',
             'status': game.move(x, y) and True or False,
-            'gamesig': game.signature(),
-            'data': game.board.take_snapshot()}
+            'gamesig': game.signature()}
 
 
 @app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
