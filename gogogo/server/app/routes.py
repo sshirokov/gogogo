@@ -44,6 +44,14 @@ def player_skip(game, player):
             'status': game.skip(),
             'gamesig': game.signature()}
 
+@app.post("/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/boot-other/", name="game-player-boot")
+@with_game
+@with_player
+def boot_other(game, player):
+    print "Me:", player
+    print "Others:", Player.find(game.name, exclude={'player': player.uid})
+    return {'message': ''}
+
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/move/', name='game-player-move')
 @with_game
 @with_player

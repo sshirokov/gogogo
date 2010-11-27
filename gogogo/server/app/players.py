@@ -52,6 +52,9 @@ class Player(object):
     @classmethod
     def find(cls, game, **kwargs):
         players_key = cls._set.format(game=game)
+        exclude = kwargs.pop('exclude', {})
+        def not_excluded(k, v):
+            return True
         def get_known_players():
             players = cls._redis.smembers(players_key)
             players = [Player(game, player, refresh=False) for player in players]
@@ -59,7 +62,8 @@ class Player(object):
         def player_matches_kwargs(player):
             player.fetch()
             print "Testing:", player.info, "vs", kwargs
-            return reduce(lambda acc, k_v: acc and (player.info.get(k_v[0]) == k_v[1]),
+            return reduce(lambda acc, k_v: acc and \
+                                            (player.info.get(k_v[0]) == k_v[1]) and not_excluded(*k_v),
                           kwargs.items(),
                           True)
 

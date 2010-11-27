@@ -81,6 +81,26 @@
          return false;
      }
 
+   function boot_other(callback) {
+     callback = callback || function(err, data) { };
+     console.log("Booting others: ", info.game, info.player);
+
+     var url = $("#boot-other").attr("action").replace("{game}", info.game).replace("{player}", info.player);
+
+     $.ajax({url: url,
+             type: "POST",
+             success: function(data, text_status, xhr) {
+               console.log("Booted others:", xhr.status, data, text_status, xhr);
+               load_my_board();
+             },
+             error: function(xhr, text_status, errorThrown) {
+               console.log("Failed to boot others:", xhr.status, xhr, text_status, errorThrown);
+             }
+            });
+
+     return false;
+   }
+
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
@@ -132,7 +152,7 @@
          //Register events relevant to a board
          $('#register-form').submit(register_form);
          $("#skip-form").submit(function() { return skip_move(info.game, info.player) });
-         $("#boot-other").submit(function() { return false; });
+         $("#boot-other").submit(function() { return boot_other() });
 
          $("#game.screen .controls").hide();
          $("#game.screen .controls.default").show();
