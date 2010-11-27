@@ -6,7 +6,7 @@ from optparse import OptionParser
 
 def options_arguments_and_parser():
     import bottle
-    
+    from gogogo.server import adapters
     parser = OptionParser()
     parser.add_option("-p", "--port", dest="port", default=9090,
                       type="int",
@@ -26,7 +26,7 @@ def options_arguments_and_parser():
                       help="The root of the media [default: %default]")
     parser.add_option('-t', '--tornado', dest='server',
                       action='store_const', default=bottle.WSGIRefServer,
-                      const=bottle.TornadoServer,
+                      const=adapters.TornadoServer,
                       help="Use the Tornado server")
     (options, args) = parser.parse_args()
     return options.__dict__, args, parser
