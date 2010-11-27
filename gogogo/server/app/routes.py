@@ -107,6 +107,7 @@ def game_branch(game, branch):
             'turn': board.player_turn(),
             'over': board.game_over,
             'gamesig': game.signature(branch),
+            'scores': game.scores(),
             'data': board.take_snapshot()}
 
 @app.get('/game/:game#[0-9a-f]+#/', name='game-index')
@@ -117,6 +118,7 @@ def game(game):
             'turn': game.who(),
             'over': game.board.game_over,
             'gamesig': game.signature(),
+            'scores': game.scores(),
             'data': game.board.take_snapshot()}
 
 @app.post('/game/create/', name='game-create')
