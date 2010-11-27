@@ -21,7 +21,8 @@
      };
 
      function ping_player() {
-         var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
+       var url = "/game/" + info.game + "/player/" + info.player + "/ping/";
+       $("#register").hide();
 
          info.interval = setInterval(function() {
                                          $.ajax({url : url,
@@ -29,9 +30,10 @@
 
                                                  success: function() { },
                                                  error: function(xhr, text_status, erroThrown) {
-                                                     if(xhr.code == 404) {
+                                                     if(xhr.status == 404) {
                                                          clearInterval(info.interval);
                                                          info.interval = false;
+                                                         $("#register").show();
                                                      }
                                                  }
                                                });
@@ -54,8 +56,6 @@
                      success: function(data, text_status, xhr) {
                          console.log("Registered:", data, text_status, xhr);
                          info.player = data.player;
-                         //TODO: Start the ping thread
-
                          ping_player();
                      },
                      error: function(xhr, text_status, errorThrown) {
