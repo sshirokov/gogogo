@@ -90,7 +90,6 @@
          console.log("Want the last move from:", info.latest.data);
          var move = info.latest.data.moves.slice(-1).pop();
 
-
          function flash(message) {
              console.log("FLASHING:", message);
          }
