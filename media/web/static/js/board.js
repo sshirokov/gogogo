@@ -120,7 +120,7 @@
                                                       arguments.callee.finished = true;
                                                       flash.remove();
                                                   }}
-                                         }, 1500);
+                                         }, 2000);
                       })(gfx.utils.center(
                              gfx.utils.draw.text(0, 0, message,
                                                  $.extend({
