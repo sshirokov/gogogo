@@ -22,14 +22,85 @@
          height: 500,
          rows: 19,
          cols: 19,
-         step: false,
          corner_offset: 30,
          stone: 10,
+
+         utils: {
+             player_to_color: function(player) {
+                 return {'Black': '#000', 'White': '#fff'}[player] || "Salmon";
+             },
+
+             x_to_paper: function(x) {
+                 return gfx.corner_offset + (
+                     x * gfx.utils.step()
+                 );
+             },
+
+             y_to_paper: function(y) {
+                 return gfx.corner_offset + (
+                     ((gfx.rows - 1) - y) * gfx.utils.step()
+                 );
+             },
+
+             step: function() { return (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1); },
+
+             draw: {
+                 stone: function(x, y, color) {
+                     color = color || "Salmon";
+                     return gfx.paper.circle(gfx.utils.x_to_paper(x),
+                                             gfx.utils.y_to_paper(y),
+                                             gfx.stone).
+                                      attr({fill: color});
+                 },
+
+                 highlight: function(x, y, options) {
+                     (function(highlight) {
+                          //Animate the object we create below
+                          highlight.animate({'25%': {'scale': -0.3 },
+                                             '50%': {'scale': 1 },
+                                             '75%': {'scale': 0.7 },
+                                             '100%': {'scale': 0,
+                                                      'callback': function() {
+                                                          if(arguments.callee.finished) return;
+                                                          arguments.callee.finished = true;
+                                                          highlight.remove();
+                                                      }}
+                                            }, 1000);
+                      })([0, 0.3, 0.6, 1, 1.5, 2].reduce(
+                             //Create a set full of objects to animate
+                             function(hl, scale) {
+                                 return hl.push(gfx.paper.circle(gfx.utils.x_to_paper(x),
+                                                                 gfx.utils.y_to_paper(y),
+                                                                 gfx.stone * scale)
+                                               ) && hl;
+                             },
+                             gfx.paper.set()).
+                                       attr($.extend({
+                                                         'stroke': '#000'
+                                                     }, options || {})));
+                 },
+
+                 flash: function(message, options) {
+                     console.log("Flash:", message, "with", options);
+                 }
+
+             }
+         },
 
          elements: {
 
          }
      };
+
+     function show_last_move() {
+         console.log("Want the last move from:", info.latest.data);
+         var move = info.latest.data.moves.slice(-1).pop();
+
+         if(!move) gfx.utils.draw.flash("There have been no moves");
+         else if(move.passing) gfx.utils.draw.flash(move.player + " passed");
+         else gfx.utils.draw.highlight(move.x, move.y, {'stroke': gfx.utils.player_to_color(move.player)});
+     }
+
      function load_my_board() {
          gogogo.load_board('/game/' + info.game + '/');
      }
@@ -281,6 +352,7 @@
          $("#skip-form").submit(function() { return skip_move(info.game, info.player) });
          $("#boot-other").submit(function() { return boot_other() });
          $('#create-branch-form').submit(create_branch);
+         $('#last-move-button').click(show_last_move);
 
          $("#game.screen .controls").hide();
          $("#game.screen .controls.default").show();
@@ -335,7 +407,6 @@
          gfx.elements.lines = [];
          gfx.elements.stones = {};
          gfx.elements.positions = [];
-         gfx.step = (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1);
 
          for(var col = 0; col < gfx.cols; col++) {
              var ex, ey,
@@ -343,7 +414,7 @@
                  sy = gfx.corner_offset,
                  distance = gfx.width - (sx * 2),
              ey = distance + sx;
-             sx += (gfx.step * col);
+             sx += (gfx.utils.step() * col);
              ex = sx;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
              gfx.elements.lines.push(gfx.paper.path(path));
@@ -356,7 +427,7 @@
                  distance = gfx.width - (sy * 2),
                  step = distance / (gfx.rows - 1);
              ex = distance + sx;
-             sy += (gfx.step * row);
+             sy += (gfx.utils.step() * row);
              ey = sy;
              var path = "M" + sx + " " + sy + "L" + ex + " " + ey;
              gfx.elements.lines.push(gfx.paper.path(path));
@@ -365,13 +436,10 @@
          //Mark the positions on the board
          for(var row = 0; row < gfx.rows; row++) {
              for(var col = 0; col < gfx.cols; col++) {
-                 var pos = gfx.paper.circle(gfx.corner_offset + (
-                                                col * gfx.step
-                                            ),
-                                            gfx.corner_offset + (
-                                                ((gfx.rows - 1) - row) * gfx.step
-                                            ),
-                                            gfx.stone).attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
+                 var pos = gfx.paper.circle(gfx.utils.x_to_paper(col),
+                                            gfx.utils.y_to_paper(row),
+                                            gfx.stone).
+                                     attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
                  pos.hover(function (event) {
                                this.attr({'fill-opacity': 0.25});
                            }, function (event) {
@@ -405,21 +473,11 @@
              }
 
              info.signature = signature;
-             function player_to_color(player) {
-                 return {'Black': '#000', 'White': '#fff'}[player];
-             }
 
              $(board.positions).each(function(i, v) {
-                                         gfx.elements.stones[v.player] = gfx.elements.stones[v.player] || [];
-                                         gfx.elements.stones[v.player].push(
-                                             gfx.paper.circle(gfx.corner_offset + (
-                                                                  v.x * gfx.step
-                                                              ),
-                                                              gfx.corner_offset + (
-                                                                  ((board.height - 1) - v.y) * gfx.step
-                                                              ),
-                                                              gfx.stone).
-                                                       attr({fill: player_to_color(v.owner)})
+                                         gfx.elements.stones[v.owner] = gfx.elements.stones[v.owner] || [];
+                                         gfx.elements.stones[v.owner].push(
+                                             gfx.utils.draw.stone(v.x, v.y, gfx.utils.player_to_color(v.owner))
                                          );
                                  });
 

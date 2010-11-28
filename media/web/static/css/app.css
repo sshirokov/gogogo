@@ -19,3 +19,7 @@ div#container {
 #all {
     list-style-type: none;
 }
+
+.inline {
+    display: inline;
+}
