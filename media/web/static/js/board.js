@@ -44,6 +44,14 @@
 
              step: function() { return (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1); },
 
+             center: function(o) {
+                 var bbox = o.getBBox(),
+                     dx = (gfx.width / 2) - bbox.x - (bbox.width / 2),
+                     dy = (gfx.height / 2) - bbox.y - (bbox.height / 2);
+                 console.log("Centering:", o, "bounded", bbox, 'T(' + dx + ',', dy + ')');
+                 return o.translate(dx, dy);
+             },
+
              draw: {
                  stone: function(x, y, color) {
                      color = color || "Salmon";
@@ -51,6 +59,18 @@
                                              gfx.utils.y_to_paper(y),
                                              gfx.stone).
                                       attr({fill: color});
+                 },
+
+                 text: function(x, y, message, options) {
+                     function pop_key(o, k, def) { var val = o[k] || def; delete o[k]; return val; }
+                     options = $.extend({
+                                            size: 15,
+                                            font: 'Coolvetica'
+                                        }, options || {});
+                     return gfx.paper.print(x, y, message,
+                                            gfx.paper.getFont(pop_key(options, 'font')),
+                                            pop_key(options, 'size')).
+                                      attr(options);
                  },
 
                  highlight: function(x, y, options) {
@@ -81,7 +101,37 @@
                  },
 
                  flash: function(message, options) {
-                     console.log("Flash:", message, "with", options);
+                     if(!message) return;
+                     (function(flash) {
+                          var scale = flash[0].attr('scale');
+                          function scale_str(x, y) { return x + " " + y; }
+                          flash.animate({'0%': {scale: scale_str(scale.x, scale.y)},
+                                         '0%': {opacity: 0, easing: '>'},
+
+                                         '25%': {scale: scale_str(scale.x * 1.3, scale.y * 1.3)},
+
+                                         '50%': {scale: scale_str(scale.x, scale.y), opacity: 1},
+
+                                         '75%': {scale: scale_str(scale.x * 1.3, scale.y * 1.3)},
+
+                                         '100%': {scale: 0, opacity: 0,
+                                                  callback: function() {
+                                                      if(arguments.callee.finished) return;
+                                                      arguments.callee.finished = true;
+                                                      flash.remove();
+                                                  }}
+                                         }, 2000);
+                      })(gfx.utils.center(
+                             gfx.utils.draw.text(0, 0, message,
+                                                 $.extend({
+                                                              size: 45,
+                                                              fill: 'black',
+                                                              stroke: '#ababab',
+                                                              'stroke-width': 2
+                                                          },
+                                                          options,
+                                                          {opacity: 0} //Mandatory for animation
+                                                 ))));
                  }
 
              }
@@ -96,8 +146,8 @@
          console.log("Want the last move from:", info.latest.data);
          var move = info.latest.data.moves.slice(-1).pop();
 
-         if(!move) gfx.utils.draw.flash("There have been no moves");
-         else if(move.passing) gfx.utils.draw.flash(move.player + " passed");
+         if(!move) gfx.utils.draw.flash("No moves yet!", {fill: 'red'});
+         else if(move.passing) gfx.utils.draw.flash(move.player + " passed", {fill: gfx.utils.player_to_color(move.player)});
          else gfx.utils.draw.highlight(move.x, move.y, {'stroke': gfx.utils.player_to_color(move.player)});
      }
 
@@ -269,6 +319,9 @@
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
+         var pass = function(message) { callback(false, message); return true; },
+             fail = function(message) { callback(true, message); return false; };
+         if(!info.player) return fail("You're not registered");
 
          var url = '/game/' + info.game + '/player/' + info.player + '/move/';
 
@@ -278,12 +331,20 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("Moved:", xhr.status, data, text_status, xhr);
+                     pass();
                      load_my_board();
                  },
                  error: function(xhr, text_status, errorThrown) {
-                     console.log("Failed to move:", xhr.status, xhr, text_status, errorThrown);
+                     console.log("Failed to move:", xhr.status, xhr.responseText, xhr, text_status, errorThrown);
+                     try {
+                         var j_res = $.parseJSON(xhr.responseText);
+                         fail(j_res && j_res.message);
+                     } catch (x) {
+                         fail();
+                     }
                  }
          });
+         return undefined;
      }
 
      function ping(control) {
@@ -449,7 +510,8 @@
                      return function(even) {
                          console.log("Clicked:", this, x, y);
                          window.gogogo.make_move(info.game, info.player, x, y, function(err, data) {
-                                                if(err) console.log("Error:", data);
+                                                if(err && data) gfx.utils.draw.flash(data, {fill: 'red'});
+                                                else if(err) console.log("Error:", data);
                                                 else console.log("Moved:", data);
                                             });
                      };

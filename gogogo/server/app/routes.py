@@ -49,7 +49,6 @@ def player_skip(game, player):
 @with_game
 @with_player
 def boot_other(game, player):
-    print "Others:", 
     return {'message': '',
             'count': len([p.delete()
                           for p in Player.find(game.name, exclude={'uid': player.uid})])}
