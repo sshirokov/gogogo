@@ -10,7 +10,8 @@
              all: []
          },
 
-         interval: false,
+         pinging: false,
+         pending_ping: null,
          ping: null,
 
          signature: false
@@ -349,22 +350,23 @@
 
      function ping(control) {
          if(control !== undefined) {
-             if(control) {
-                 //Start the pinger
-                 ping(false); //Sanity kill
-                 info.interval = setInterval(function() { ping(); }, 3000);
-             }
-             else{
-                 //Stop the pinger
-                 if(info.interval) clearInterval(info.interval);
-                 info.interval = null;
-             }
-             return;
-         }
+             if(control === true || control === false) {
+                 //Start or Stop signal
+                 if(info.pending_ping) clearTimeout(info.pending_ping);
+                 info.pinging = control;
+                 info.pending_ping = null;
 
-         var url = "/game/" + info.game + "/";
-         if(info.player) url += "player/" + info.player + '/';
-         url += "ping/";
+                 if(!info.pinging) return false;
+                 else return ping(1);
+             }
+             else {
+                 //Delayed call
+                 if(!info.pinging) return false;
+                 if(info.pending_ping) clearTimeout(info.pending_ping);
+
+                 return info.pending_ping = setTimeout(function() { ping(); }, control);
+             }
+         }
 
          if(info.player) {
              $('.controls').show();
@@ -373,15 +375,22 @@
          else {
              info.color = null;
          }
-         if(!info.ping) {
+         if(!info.ping && info.game) {
+             var url = "/game/" + info.game + "/";
+             if(info.player) url += "player/" + info.player + '/';
+             url += "ping/";
+
              info.ping = $.ajax({url : url,
                                  type: 'POST',
 
                                  complete: function(xhr, text_status) {
                                      info.ping = null;
+                                     console.log("Ping-again", xhr.ping_again);
+                                     if(xhr.ping_again) ping(xhr.ping_again);
                                  },
 
                                  success: function(data, text_status, xhr) {
+                                     xhr.ping_again = data.next;
                                      info.state = data.state;
                                      if(data.gamesig != info.signature) {
                                          console.log("Game out of date!");
@@ -390,8 +399,11 @@
                                      }
                                  },
                                  error: function(xhr, text_status, erroThrown) {
+                                     xhr.ping_again = 1000; //Default error retry
                                      if(info.player && xhr.status == 404) {
+                                         xhr.ping_again = 0;
                                          info.player = false;
+
                                          $('.controls').hide();
                                          $('.controls.default').show();
                                      }
@@ -405,6 +417,7 @@
          else {
              if(!info.player) $('#register').show();
          }
+         return undefined;
      }
 
      function boot() {
@@ -420,11 +433,6 @@
      }
 
      function load_board(url) {
-         if(!info.signature) {
-             console.log("We're unsigned. Booting the pinger");
-             ping(true);
-         }
-
          console.log("Loading board from:", url);
          $.ajax({url: url,
                  type: 'GET',
@@ -443,7 +451,10 @@
                      else
                          my_turn(false);
 
-                     console.log("State: ", info.state);
+                     if(!info.signature) {
+                         console.log("We're unsigned. Booting the pinger");
+                         ping(true);
+                     }
 
                      window.gogogo.draw_board(data.data, data.gamesig);
 
