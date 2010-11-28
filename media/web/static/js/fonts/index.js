@@ -2,6 +2,9 @@
      var fonts = '/static/js/fonts/fonts.json';
      var we = $('script:last');
      $.ajax({url: fonts, type: 'GET', async: false,
+             contentType: 'application/json',
+             dataType: 'json',
+
              error: function() { console.log("Error loading fonts", arguments); },
              success: function(data) {
                  data.fonts.forEach(function(font) {
