@@ -44,6 +44,14 @@
 
              step: function() { return (gfx.width - (gfx.corner_offset * 2)) / (gfx.rows - 1); },
 
+             center: function(o) {
+                 var bbox = o.getBBox(),
+                     dx = (gfx.width / 2) - bbox.x - (bbox.width / 2),
+                     dy = (gfx.height / 2) - bbox.y - (bbox.height / 2);
+                 console.log("Centering:", o, "bounded", bbox, 'T(' + dx + ',', dy + ')');
+                 return o.translate(dx, dy);
+             },
+
              draw: {
                  stone: function(x, y, color) {
                      color = color || "Salmon";
@@ -51,6 +59,18 @@
                                              gfx.utils.y_to_paper(y),
                                              gfx.stone).
                                       attr({fill: color});
+                 },
+
+                 text: function(x, y, message, options) {
+                     function pop_key(o, k, def) { var val = o[k] || def; delete o[k]; return val; }
+                     options = $.extend({
+                                            size: 15,
+                                            font: 'Coolvetica'
+                                        }, options || {});
+                     return gfx.paper.print(x, y, message,
+                                            gfx.paper.getFont(pop_key(options, 'font')),
+                                            pop_key(options, 'size')).
+                                      attr(options);
                  },
 
                  highlight: function(x, y, options) {
@@ -82,6 +102,11 @@
 
                  flash: function(message, options) {
                      console.log("Flash:", message, "with", options);
+                     var text = gfx.utils.center(gfx.utils.draw.text(0, 0, message, {
+                                                                         size: 35,
+                                                                         fill: 'black',
+                                                                         stroke: 'white'
+                                                                     }));
                  }
 
              }
