@@ -24,7 +24,7 @@ def ping_reply(game, player=None):
     return dict({'message': '',
                  'state': Player.game_state(game.name),
                  'gamesig': game.signature(),
-                 'next': 3000,
+                 'next': 2000,
                  'ok': True},
                 **(player and {'player': player.uid} or {}))
 
