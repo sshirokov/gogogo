@@ -53,7 +53,7 @@
                                       attr({fill: color});
                  },
 
-                 highlight: function(x, y, color) {
+                 highlight: function(x, y, options) {
                      (function(highlight) {
                           //Animate the object we create below
                           highlight.animate({'25%': {'scale': -0.3 },
@@ -75,7 +75,13 @@
                                                ) && hl;
                              },
                              gfx.paper.set()).
-                                       attr({'stroke': color}));
+                                       attr($.extend({
+                                                         'stroke': '#000'
+                                                     }, options || {})));
+                 },
+
+                 flash: function(message, options) {
+
                  }
 
              }
@@ -96,7 +102,7 @@
 
          if(!move) flash("There have been no moves");
          else if(move.passing) flash(move.player + " passed");
-         else gfx.utils.draw.highlight(move.x, move.y, gfx.utils.player_to_color(move.player));
+         else gfx.utils.draw.highlight(move.x, move.y, {'stroke': gfx.utils.player_to_color(move.player)});
      }
 
      function load_my_board() {
