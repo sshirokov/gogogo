@@ -101,12 +101,24 @@
                  },
 
                  flash: function(message, options) {
-                     console.log("Flash:", message, "with", options);
-                     var text = gfx.utils.center(gfx.utils.draw.text(0, 0, message, {
-                                                                         size: 35,
-                                                                         fill: 'black',
-                                                                         stroke: 'white'
-                                                                     }));
+                     (function(flash) {
+                          console.log("Scale:", flash[0].attr('scale'));
+                          // flash.animate({'0%': {},
+                          //                '50%': {},
+                          //                '100%': {scale: 0,
+                          //                         callback: function() {
+                          //                             if(arguments.callee.finished) return;
+                          //                             arguments.callee.finished = true;
+                          //                             flash.remove();
+                          //                         }}
+                          //                }, 1000);
+                      })(gfx.utils.center(
+                             gfx.utils.draw.text(0, 0, message, {
+                                                     size: 45,
+                                                     fill: 'black',
+                                                     stroke: '#ababab',
+                                                     'stroke-width': 2
+                                                 })));
                  }
 
              }
