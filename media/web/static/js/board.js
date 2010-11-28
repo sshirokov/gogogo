@@ -81,7 +81,7 @@
                  },
 
                  flash: function(message, options) {
-
+                     console.log("Flash:", message, "with", options);
                  }
 
              }
@@ -96,12 +96,8 @@
          console.log("Want the last move from:", info.latest.data);
          var move = info.latest.data.moves.slice(-1).pop();
 
-         function flash(message) {
-             console.log("FLASHING:", message);
-         }
-
-         if(!move) flash("There have been no moves");
-         else if(move.passing) flash(move.player + " passed");
+         if(!move) gfx.utils.draw.flash("There have been no moves");
+         else if(move.passing) gfx.utils.draw.flash(move.player + " passed");
          else gfx.utils.draw.highlight(move.x, move.y, {'stroke': gfx.utils.player_to_color(move.player)});
      }
 
