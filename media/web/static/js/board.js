@@ -47,8 +47,8 @@
 
              center: function(o) {
                  var bbox = o.getBBox(),
-                     dx = (gfx.width / 2) - bbox.x - (bbox.width / 2),
-                     dy = (gfx.height / 2) - bbox.y - (bbox.height / 2);
+                 dx = (gfx.width / 2) - bbox.x - (bbox.width / 2),
+                 dy = (gfx.height / 2) - bbox.y - (bbox.height / 2);
                  console.log("Centering:", o, "bounded", bbox, 'T(' + dx + ',', dy + ')');
                  return o.translate(dx, dy);
              },
@@ -59,7 +59,7 @@
                      return gfx.paper.circle(gfx.utils.x_to_paper(x),
                                              gfx.utils.y_to_paper(y),
                                              gfx.stone).
-                                      attr({fill: color});
+                         attr({fill: color});
                  },
 
                  text: function(x, y, message, options) {
@@ -71,7 +71,7 @@
                      return gfx.paper.print(x, y, message,
                                             gfx.paper.getFont(pop_key(options, 'font')),
                                             pop_key(options, 'size')).
-                                      attr(options);
+                         attr(options);
                  },
 
                  highlight: function(x, y, options) {
@@ -96,9 +96,9 @@
                                                ) && hl;
                              },
                              gfx.paper.set()).
-                                       attr($.extend({
-                                                         'stroke': '#000'
-                                                     }, options || {})));
+                         attr($.extend({
+                                           'stroke': '#000'
+                                       }, options || {})));
                  },
 
                  flash: function(message, options) {
@@ -121,7 +121,7 @@
                                                       arguments.callee.finished = true;
                                                       flash.remove();
                                                   }}
-                                         }, 2000);
+                                        }, 2000);
                       })(gfx.utils.center(
                              gfx.utils.draw.text(0, 0, message,
                                                  $.extend({
@@ -132,7 +132,7 @@
                                                           },
                                                           options,
                                                           {opacity: 0} //Mandatory for animation
-                                                 ))));
+                                                         ))));
                  }
 
              }
@@ -156,7 +156,7 @@
          gogogo.load_board('/game/' + info.game + '/');
      }
 
-     function create_branch() {try{
+     function create_branch() {
          if(!info.player) return false;
          var url = $(this).attr('action').replace('{game}', info.game);
          var form_data = {
@@ -165,7 +165,7 @@
              player: info.player
          };
 
-    $(this).find('input[type=text]').val('');
+         $(this).find('input[type=text]').val('');
 
          console.log("Want to create branch:", url, form_data);
          $.ajax({ url: url,
@@ -179,11 +179,7 @@
                   error: function(xhr, text_status, errorThrown) {
                       console.log("Couldn't create branch: ", xhr.status, xhr, text_status, errorThrown);
                   }
-         });
-} catch (x) {
-    console.log("Error", x);
-}
-
+                });
 
          return false;
      }
@@ -217,8 +213,8 @@
                                                      template.attr('id').replace('{branch}', branch));
                                        template.html(template.html().replace(/\{branch\}/gm, branch));
                                        $("button", template).click(function() {
-                                                                         return change_branch(branch);
-                                                                     });
+                                                                       return change_branch(branch);
+                                                                   });
                                        $('#branches .branch.template:first').parent().
                                            append(template);
                                    });
@@ -310,18 +306,18 @@
                      load_my_board();
                  },
                  error: function(xhr, text_status, errorThrown) {
-               console.log("Failed to boot others:", xhr.status, xhr, text_status, errorThrown);
-             }
-            });
+                     console.log("Failed to boot others:", xhr.status, xhr, text_status, errorThrown);
+                 }
+                });
 
-     return false;
-   }
+         return false;
+     }
 
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
          var pass = function(message) { callback(false, message); return true; },
-             fail = function(message) { callback(true, message); return false; };
+         fail = function(message) { callback(true, message); return false; };
          if(!info.player) return fail("You're not registered");
 
          var url = '/game/' + info.game + '/player/' + info.player + '/move/';
@@ -344,7 +340,7 @@
                          fail();
                      }
                  }
-         });
+                });
          return undefined;
      }
 
@@ -408,7 +404,7 @@
                                          $('.controls.default').show();
                                      }
                                  }
-                         });
+                                });
          }
 
          if(info.state == "Full") {
@@ -466,7 +462,7 @@
 
                      return false;
                  }
-         });
+                });
      }
 
      function draw_board(board, signature) {
@@ -482,9 +478,9 @@
 
          for(var col = 0; col < gfx.cols; col++) {
              var ex, ey,
-                 sx = gfx.corner_offset,
-                 sy = gfx.corner_offset,
-                 distance = gfx.width - (sx * 2),
+             sx = gfx.corner_offset,
+             sy = gfx.corner_offset,
+             distance = gfx.width - (sx * 2),
              ey = distance + sx;
              sx += (gfx.utils.step() * col);
              ex = sx;
@@ -494,10 +490,10 @@
 
          for(var row = 0; row < gfx.rows; row++) {
              var ex, ey,
-                 sx = gfx.corner_offset,
-                 sy = gfx.corner_offset,
-                 distance = gfx.width - (sy * 2),
-                 step = distance / (gfx.rows - 1);
+             sx = gfx.corner_offset,
+             sy = gfx.corner_offset,
+             distance = gfx.width - (sy * 2),
+             step = distance / (gfx.rows - 1);
              ex = distance + sx;
              sy += (gfx.utils.step() * row);
              ey = sy;
@@ -511,7 +507,7 @@
                  var pos = gfx.paper.circle(gfx.utils.x_to_paper(col),
                                             gfx.utils.y_to_paper(row),
                                             gfx.stone).
-                                     attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
+                     attr({fill: '#0f0', 'stroke-opacity': 0, 'fill-opacity': 0});
                  pos.hover(function (event) {
                                this.attr({'fill-opacity': 0.25});
                            }, function (event) {
@@ -521,15 +517,15 @@
                      return function(even) {
                          console.log("Clicked:", this, x, y);
                          window.gogogo.make_move(info.game, info.player, x, y, function(err, data) {
-                                                if(err && data) gfx.utils.draw.flash(data, {fill: 'red'});
-                                                else if(err) console.log("Error:", data);
-                                                else console.log("Moved:", data);
-                                            });
+                                                     if(err && data) gfx.utils.draw.flash(data, {fill: 'red'});
+                                                     else if(err) console.log("Error:", data);
+                                                     else console.log("Moved:", data);
+                                                 });
                      };
                  };
                  pos.click(make_click(col, row));
 
-               gfx.elements.positions.push(pos);
+                 gfx.elements.positions.push(pos);
              }
          }
 
@@ -552,7 +548,7 @@
                                          gfx.elements.stones[v.owner].push(
                                              gfx.utils.draw.stone(v.x, v.y, gfx.utils.player_to_color(v.owner))
                                          );
-                                 });
+                                     });
 
          }
 
