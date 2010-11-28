@@ -319,6 +319,9 @@
      function make_move(game, player, x, y, callback) {
          callback = callback || function(err, data) {};
          console.log("Want move:", game, player, x, y);
+         var pass = function(message) { callback(false, message); return true; },
+             fail = function(message) { callback(true, message); return false; };
+         if(!info.player) return fail("You're not registered");
 
          var url = '/game/' + info.game + '/player/' + info.player + '/move/';
 
@@ -328,12 +331,20 @@
 
                  success: function(data, text_status, xhr) {
                      console.log("Moved:", xhr.status, data, text_status, xhr);
+                     pass();
                      load_my_board();
                  },
                  error: function(xhr, text_status, errorThrown) {
-                     console.log("Failed to move:", xhr.status, xhr, text_status, errorThrown);
+                     console.log("Failed to move:", xhr.status, xhr.responseText, xhr, text_status, errorThrown);
+                     try {
+                         var j_res = $.parseJSON(xhr.responseText);
+                         fail(j_res && j_res.message);
+                     } catch (x) {
+                         fail();
+                     }
                  }
          });
+         return undefined;
      }
 
      function ping(control) {
@@ -499,7 +510,8 @@
                      return function(even) {
                          console.log("Clicked:", this, x, y);
                          window.gogogo.make_move(info.game, info.player, x, y, function(err, data) {
-                                                if(err) console.log("Error:", data);
+                                                if(err && data) gfx.utils.draw.flash(data, {fill: 'red'});
+                                                else if(err) console.log("Error:", data);
                                                 else console.log("Moved:", data);
                                             });
                      };
