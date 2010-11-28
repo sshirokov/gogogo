@@ -122,13 +122,16 @@
                                                   }}
                                          }, 1500);
                       })(gfx.utils.center(
-                             gfx.utils.draw.text(0, 0, message, {
-                                                     size: 45,
-                                                     fill: 'black',
-                                                     stroke: '#ababab',
-                                                     'stroke-width': 2,
-                                                     opacity: 0
-                                                 })));
+                             gfx.utils.draw.text(0, 0, message,
+                                                 $.extend({
+                                                              size: 45,
+                                                              fill: 'black',
+                                                              stroke: '#ababab',
+                                                              'stroke-width': 2
+                                                          },
+                                                          options,
+                                                          {opacity: 0} //Mandatory for animation
+                                                 ))));
                  }
 
              }
@@ -143,8 +146,8 @@
          console.log("Want the last move from:", info.latest.data);
          var move = info.latest.data.moves.slice(-1).pop();
 
-         if(!move) gfx.utils.draw.flash("There have been no moves");
-         else if(move.passing) gfx.utils.draw.flash(move.player + " passed");
+         if(!move) gfx.utils.draw.flash("No moves yet!", {fill: 'red'});
+         else if(move.passing) gfx.utils.draw.flash(move.player + " passed", {fill: gfx.utils.player_to_color(move.player)});
          else gfx.utils.draw.highlight(move.x, move.y, {'stroke': gfx.utils.player_to_color(move.player)});
      }
 
