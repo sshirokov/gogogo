@@ -8,6 +8,42 @@ from gogogo.server.app import app
 from gogogo.server.filters import with_game, with_player
 from gogogo.server.app.players import Player
 
+def make_consuming_chain(*functions):
+    '''
+    Return a function that will call functions in sequence, passing the return down the chain of functions
+    '''
+    return reduce(lambda acc, f: lambda *args, **kwargs: f(acc(*args, **kwargs)), functions)
+
+class multiroute(object):
+    def __init__(self, *routes, **options):
+        self.options = dict({}, **options)
+        self.routes = routes
+
+    def __call__(self, fn):
+        create_chain = lambda routes: make_consuming_chain(*routes[::-1])
+        [create_chain(routes)(fn)
+         for routes in self.routes]
+        return fn
+
+#Small helpers
+@multiroute(
+    [
+        app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping'),
+        with_game
+    ],
+    [
+        app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-ping'),
+        with_game,
+        with_player
+    ]
+)
+def ping_reply(game, player=None):
+    return dict({'message': '',
+                 'state': Player.game_state(game.name),
+                 'gamesig': game.signature(),
+                 'ok': True},
+                **(player and {'player': player.uid} or {}))
+
 @app.post('/game/:game#[0-9a-f]+#/player/create/', name='game-player-create')
 @with_game
 def register_player(game):
@@ -24,16 +60,6 @@ def register_player(game):
     return {'message': '',
             'player': player.uid,
             'game': game.name}
-
-@app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-ping')
-@with_game
-@with_player
-def ping_player(game, player):
-    return {'message': '',
-            'player': player.uid,
-            'state': Player.game_state(game.name),
-            'gamesig': game.signature(),
-            'ok': True}
 
 @app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/skip/', name='game-player-skip')
 @with_game
@@ -68,15 +94,6 @@ def player_move(game, player):
     return {'message': '',
             'status': game.move(x, y) and True or False,
             'gamesig': game.signature()}
-
-@app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping')
-@with_game
-def ping_game(game):
-    return {'message': '',
-            'state': Player.game_state(game.name),
-            'gamesig': game.signature(),
-            'ok': True}
-
 
 @app.get('/game/:game#[0-9a-f]+#/branch/', name='game-branch-index')
 @with_game
