@@ -101,23 +101,33 @@
                  },
 
                  flash: function(message, options) {
+                     if(!message) return;
                      (function(flash) {
-                          console.log("Scale:", flash[0].attr('scale'));
-                          // flash.animate({'0%': {},
-                          //                '50%': {},
-                          //                '100%': {scale: 0,
-                          //                         callback: function() {
-                          //                             if(arguments.callee.finished) return;
-                          //                             arguments.callee.finished = true;
-                          //                             flash.remove();
-                          //                         }}
-                          //                }, 1000);
+                          var scale = flash[0].attr('scale');
+                          function scale_str(x, y) { return x + " " + y; }
+                          flash.animate({'0%': {scale: scale_str(scale.x, scale.y)},
+                                         '0%': {opacity: 0, easing: '>'},
+
+                                         '25%': {scale: scale_str(scale.x * 1.3, scale.y * 1.3)},
+
+                                         '50%': {scale: scale_str(scale.x, scale.y), opacity: 1},
+
+                                         '75%': {scale: scale_str(scale.x * 1.3, scale.y * 1.3)},
+
+                                         '100%': {scale: 0, opacity: 0,
+                                                  callback: function() {
+                                                      if(arguments.callee.finished) return;
+                                                      arguments.callee.finished = true;
+                                                      flash.remove();
+                                                  }}
+                                         }, 1500);
                       })(gfx.utils.center(
                              gfx.utils.draw.text(0, 0, message, {
                                                      size: 45,
                                                      fill: 'black',
                                                      stroke: '#ababab',
-                                                     'stroke-width': 2
+                                                     'stroke-width': 2,
+                                                     opacity: 0
                                                  })));
                  }
 
