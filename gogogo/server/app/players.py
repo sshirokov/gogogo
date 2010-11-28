@@ -60,7 +60,8 @@ class Player(object):
         players_key = cls._set.format(game=game)
         exclude = kwargs.pop('exclude', {})
         def get_known_players():
-            players = cls._redis.smembers(players_key)
+            try: players = cls._redis.smembers(players_key)
+            except TypeError: players = []
             players = [Player(game, player, refresh=False) for player in players]
             return players
         def player_matches_kwargs(player):
