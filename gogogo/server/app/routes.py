@@ -7,25 +7,8 @@ from gogogo.game import Game, GameError
 from gogogo.server.app import app
 from gogogo.server.filters import with_game, with_player
 from gogogo.server.app.players import Player
+from gogogo.server.app.util import multiroute
 
-def make_consuming_chain(*functions):
-    '''
-    Return a function that will call functions in sequence, passing the return down the chain of functions
-    '''
-    return reduce(lambda acc, f: lambda *args, **kwargs: f(acc(*args, **kwargs)), functions)
-
-class multiroute(object):
-    def __init__(self, *routes, **options):
-        self.options = dict({}, **options)
-        self.routes = routes
-
-    def __call__(self, fn):
-        create_chain = lambda routes: make_consuming_chain(*routes[::-1])
-        [create_chain(routes)(fn)
-         for routes in self.routes]
-        return fn
-
-#Small helpers
 @multiroute(
     [
         app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping'),

@@ -27,3 +27,10 @@ def _board_object_hook(d, replace=None):
 
 def make_board_object_hook(replace=None):
     return lambda d: _board_object_hook(d, replace)
+
+def make_consuming_chain(*functions):
+    '''
+    Return a function that will call functions in sequence, passing the return down the chain of functions
+    '''
+    return reduce(lambda acc, f: lambda *args, **kwargs: f(acc(*args, **kwargs)), functions)
+
