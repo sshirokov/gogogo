@@ -10,16 +10,11 @@ from gogogo.server.app.players import Player
 from gogogo.server.app.util import multiroute
 
 @multiroute(
-    [
-        app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping'),
-        with_game
-    ],
-    [
-        app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-ping'),
-        with_game,
-        with_player
-    ]
-)
+    [ app.post('/game/:game#[0-9a-f]+#/ping/', name='game-anon-ping'),
+      with_game ],
+    [ app.post('/game/:game#[0-9a-f]+#/player/:player#[0-9a-f]+#/ping/', name='game-player-ping'),
+      with_game,
+      with_player ])
 def ping_reply(game, player=None):
     return dict({'message': '',
                  'state': Player.game_state(game.name),
@@ -118,31 +113,29 @@ def create_branch(game):
     except GameError:
         raise bottle.HTTPResponse({'message': "Could not create branch"}, 409)
 
-@app.get('/game/:game#[0-9a-f]+#/branch/:branch#[\w_-]+#/', name='game-branch')
-@with_game
-def game_branch(game, branch):
+@multiroute(
+    [ app.get('/game/:game#[0-9a-f]+#/', name='game-index'),
+      with_game ],
+    [ app.get('/game/:game#[0-9a-f]+#/branch/:branch#[\w_-]+#/', name='game-branch'),
+      with_game ])
+def game(game, branch=None):
     try: board = game.get_board(branch)
     except GameError: raise bottle.HTTPResponse({'message': "Cannot load branch"}, 404)
 
-    return {'message': '',
-            'name': game.name,
-            'turn': board.player_turn(),
-            'over': board.game_over,
-            'gamesig': game.signature(branch),
-            'scores': game.scores(),
-            'data': board.take_snapshot()}
+    return dict({'message': '',
+                 'name': game.name,
+                 'turn': board.player_turn(),
+                 'over': board.game_over,
+                 'gamesig': game.signature(branch),
+                 'scores': game.scores(),
+                 'data': board.take_snapshot()},
 
-@app.get('/game/:game#[0-9a-f]+#/', name='game-index')
-@with_game
-def game(game):
-    return {'message': '',
-            'name': game.name,
-            'turn': game.who(),
-            'over': game.board.game_over,
-            'state': Player.game_state(game.name),
-            'gamesig': game.signature(),
-            'scores': game.scores(),
-            'data': game.board.take_snapshot()}
+                #Include data that's not relevant unless we're looking at HEAD
+                **(not branch
+                       and {'state': Player.game_state(game.name)}
+                       or {}));
+
+
 
 @app.post('/game/create/', name='game-create')
 def new_game():
