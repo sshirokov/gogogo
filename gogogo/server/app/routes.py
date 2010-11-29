@@ -146,10 +146,10 @@ def new_game():
 
 @app.get('/', name='index')
 def index():
-    use = mimeparse.best_match(['application/json', 'text/html'], bottle.request.header.get('accept'))
+    use = mimeparse.best_match(['application/json', 'text/html'], bottle.request.headers.get('accept'))
     if use == 'application/json':
         return {'message': '',
-                'accept': bottle.request.header.get('accept'),
+                'accept': bottle.request.headers.get('accept'),
                 'use': use}
     else:
         return bottle.static_file('index.html', root=app.config['media_root'])

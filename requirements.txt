@@ -1,5 +1,5 @@
 mimeparse
 dulwich
-bottle
 redis
 tornado
+git+http://github.com/defnull/bottle.git@master#egg=bottle
