@@ -113,6 +113,17 @@ def create_branch(game):
     except GameError:
         raise bottle.HTTPResponse({'message': "Could not create branch"}, 409)
 
+@app.get('/game/:game#[0-9a-f]+#.git/:file_path#.+#', name='game-git')
+@with_game
+def serve_repo(game, file_path):
+    return {
+        'info/refs': "\n".join(['%s\t%s' % (sha, ref)
+                                for (ref, sha) in game.repo.refs.as_dict().items()
+                                if ref.startswith('refs/')]),
+        'objects/info/packs': '\n'
+    }.get(file_path,
+          bottle.static_file(file_path, root=game.data))
+
 @multiroute(
     [ app.get('/game/:game#[0-9a-f]+#/', name='game-index'),
       with_game ],

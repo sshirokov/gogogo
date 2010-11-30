@@ -23,19 +23,19 @@ class Game(object):
     def __init__(self, name=None, **options):
         self.name = name or uuid.uuid4().hex
         self.options = dict(DEFAULTS, **options)
-        self.options['data'] = self.options['data'].format(name=self.name)
+        self.data = self.options.pop('data').format(name=self.name)
         new = False
 
         self.repo = None
-        if not os.path.exists(self.options['data']):
+        if not os.path.exists(self.data):
             if not self.options['create']: raise GameError("Game does not exist")
-            os.makedirs(self.options['data'])
+            os.makedirs(self.data)
 
         try:
-            self.repo = Repo(self.options['data'])
+            self.repo = Repo(self.data)
         except dulwich.errors.NotGitRepository:
             if not self.options['create']: raise GameError("Game does not exist")
-            self.repo = Repo.init_bare(self.options['data'])
+            self.repo = Repo.init_bare(self.data)
             new = True
 
 
@@ -139,6 +139,7 @@ class Game(object):
         return "Game: {name} {black} vs {white} on {x}x{y} from {data} :: {board}".format(
                  name=self.name,
                  board=self.board,
+                 data=self.data,
                  **self.options
                )
     __str__=__unicode__
